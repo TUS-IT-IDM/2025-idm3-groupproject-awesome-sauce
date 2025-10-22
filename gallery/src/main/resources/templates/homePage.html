@@ -41,79 +41,49 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
-
-<!--<header class="header">-->
-<!--  <a href="#" class="logo">LOGO GOES HERE</a>-->
-<!--  <nav class="nav-items">-->
-<!--    <a href="#">Home</a>-->
-<!--    <a href="#">About</a>-->
-<!--    <a href="#">Contact</a>-->
-<!--    <th:if test = "${User == null}">-->
-<!--      <a th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>-->
-
-<!--    </th:if>-->
-<!--    <th:if test = "${User != null}">-->
-<!--      <a href="#" onclick="confirmDelete()">Delete </a>-->
-<!--      <a href="MainGalleryController?action=updateUser">Update</a>-->
-<!--    </th:if>-->
-<!--    <a th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>-->
-
-
-<!--    <div class="icon-button">-->
-<!--      <a href="#"><i class="fas fa-user"></i></a>-->
-<!--    </div>-->
-
-<!--    <div class="icon-button">-->
-<!--      <a href="#"><i class="fas fa-search"></i></a>-->
-<!--    </div>-->
-
-<!--  </nav>-->
-<!--</header>-->
-
 <!-- HEADER -->
 <header class="header" th:with="user=${session.loggedInUser}">
   <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
 
-  <nav class="nav-items">
+  <nav class="nav-items" th:with="user=${session.loggedInUser}">
     <a th:href="@{/MainGallery/HomePage}">Home</a>
-    <a th:href="@{/MainGallery/about}">About</a>      <!-- add mapping if needed -->
-    <a th:href="@{/MainGallery/contact}">Contact</a>  <!-- add mapping if needed -->
+    <a th:href="@{/MainGallery/about}">About</a>
+    <a th:href="@{/MainGallery/contact}">Contact</a>
 
     <!-- Not logged in -->
     <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
     <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Log in</a>
 
-    <!-- Logged in -->
+    <!-- Logged in: role-aware Dashboard + Logout -->
+    <span th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
+    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
+  </span>
 
-    <!-- Role-aware Dashboard link -->
-    <span th:switch="${user != null} ? ${#strings.toLowerCase(user.userType)} : 'guest'">
-
-  <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
-  <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
-  <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
-  <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
-
-      <!-- Fallbacks -->
-  <a th:case="'guest'"        th:href="@{/MainGallery/Login}">Dashboard</a>
-  <a th:case="*"
-     th:href="@{/MainGallery/dashboard}">Dashboard</a>
-
-</span>
-
-
-    <a th:if="${user != null}" th:href="@{/MainGallery/Logout}">Logout</a>
+    <!-- ✅ Logout text link -->
+    <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
+      Logout
+    </a>
 
     <!-- Avatar icon: Profile if logged in; Login otherwise -->
-    <div class="icon-button">
-      <a th:href="${user != null} ? @{/MainGallery/profile} : @{/MainGallery/Login}">
+    <div class="icon-button" th:with="isLoggedIn=${user != null}">
+      <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
+        <i class="fas fa-user"></i>
+      </a>
+      <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
         <i class="fas fa-user"></i>
       </a>
     </div>
 
+
     <div class="icon-button">
-      <a th:href="@{/MainGallery/search}"><i class="fas fa-search"></i></a> <!-- add mapping if needed -->
+      <a th:href="@{/MainGallery/search}"><i class="fas fa-search"></i></a>
     </div>
   </nav>
+
 </header>
 <!-- /HEADER -->
 

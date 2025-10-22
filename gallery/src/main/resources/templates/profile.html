@@ -60,8 +60,12 @@
     <!-- ✅ Goes back home, session remains active -->
     <a class="button" th:href="@{/MainGallery/HomePage}">Back to Home</a>
 
-    <!-- Optional logout -->
-    <a class="button logout" th:href="@{/MainGallery/Logout}">Logout</a>
+
+    <!-- ✅ Logout text link -->
+    <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
+      Logout
+    </a>
+
   </div>
 </div>
 

@@ -9,6 +9,54 @@
         button { margin-top:12px; padding:8px 14px; }
     </style>
 </head>
+
+<!-- HEADER -->
+<header class="header" th:with="user=${session.loggedInUser}">
+    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+
+    <nav class="nav-items" th:with="user=${session.loggedInUser}">
+        <a th:href="@{/MainGallery/HomePage}">Home</a>
+        <a th:href="@{/MainGallery/about}">About</a>
+        <a th:href="@{/MainGallery/contact}">Contact</a>
+
+        <!-- Not logged in -->
+        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
+        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Log in</a>
+
+        <!-- Logged in: role-aware Dashboard + Logout -->
+        <span th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
+    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
+  </span>
+
+        <!-- ✅ Logout text link -->
+        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
+            Logout
+        </a>
+
+        <!-- Avatar icon: Profile if logged in; Login otherwise -->
+        <div class="icon-button" th:with="isLoggedIn=${user != null}">
+            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
+                <i class="fas fa-user"></i>
+            </a>
+            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+
+
+        <div class="icon-button">
+            <a th:href="@{/MainGallery/search}"><i class="fas fa-search"></i></a>
+        </div>
+    </nav>
+
+</header>
+<!-- /HEADER -->
+
+
 <body>
 <h1>Login</h1>
 
