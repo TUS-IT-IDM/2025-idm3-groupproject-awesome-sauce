@@ -15,10 +15,17 @@
         <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
 
         <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
-        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}">Logout</a>
+        <!-- ✅ Logout text link -->
+        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
+            Logout
+        </a>
 
-        <div class="icon-button">
-            <a th:href="${user != null} ? @{/MainGallery/profile} : @{/MainGallery/Login}">
+        <!-- Avatar icon: Profile if logged in; Login otherwise -->
+        <div class="icon-button" th:with="isLoggedIn=${user != null}">
+            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
+                <i class="fas fa-user"></i>
+            </a>
+            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
                 <i class="fas fa-user"></i>
             </a>
         </div>

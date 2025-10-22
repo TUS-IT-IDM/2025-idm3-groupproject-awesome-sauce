@@ -35,7 +35,7 @@ public class MainGalleryController {
     private ServletContext servletContext;
     @Autowired
     private ThumbnailService thumbnailService;
-    // Display Login Page
+
     // Display Login Page
     @GetMapping("/Login")
     public ModelAndView showLoginPage() {
@@ -109,6 +109,19 @@ public class MainGalleryController {
         mv.addObject("loggedInUser", byEmail.getEmailAddress());
         return mv;
     }
+
+
+    //Logout handler
+
+    @GetMapping("/Logout")
+    public String logout(HttpSession session) {
+        // ✅ Remove all session attributes and end session
+        session.invalidate();
+
+        // ✅ Redirect back to your login page
+        return "redirect:/MainGallery/Login";
+    }
+
 
 
     @GetMapping("/profile")
