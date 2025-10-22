@@ -50,33 +50,86 @@ public class MainGalleryController {
 
         return modelAndView;
     }
+
+    @GetMapping("/employerDashboard")
+    public ModelAndView employerDashboard() {
+        return new ModelAndView("employerDashboard");
+    }
+
+    @GetMapping("/adminDashboard")
+    public ModelAndView adminDashboard() {
+        return new ModelAndView("adminDashboard");
+    }
+
+    @GetMapping("/seniorAdminDashboard")
+    public ModelAndView seniorAdminDashboard() {
+        return new ModelAndView("seniorAdminDashboard");
+    }
+
     @PostMapping("/Login")
     public ModelAndView handleLogin(@ModelAttribute("user") User user, HttpSession session) {
-        ModelAndView modelAndView = new ModelAndView();
-        User authenticatedUser = userService.authenticate(user.getUserName(), user.getPassword());
-        if (authenticatedUser != null) {
-            // Store the authenticated user in the session
-            session.setAttribute("loggedInUser", authenticatedUser);
-            System.out.println("User Type " + authenticatedUser.getUserType());
-            // Redirect based on user type
-            if ("admin".equalsIgnoreCase(authenticatedUser.getUserType())) {
-                modelAndView.setViewName("redirect:/MainGallery/adminDashboard");
-            } else if ("student".equalsIgnoreCase(authenticatedUser.getUserType())) {
-                modelAndView.setViewName("redirect:/MainGallery/studentDashboard");
-            } else if ("employer".equalsIgnoreCase(authenticatedUser.getUserType())) {
-                modelAndView.setViewName("redirect:/MainGallery/employerDashboard");
-            } else {
-                modelAndView.setViewName("redirect:/MainGallery/dashboard");
-            }
+        ModelAndView mv = new ModelAndView("login"); // default back to login on error
+        String email = user.getEmailAddress();
+        String rawPassword = user.getPassword();
 
-            modelAndView.addObject("loggedInUser", authenticatedUser.getUserName());
+        // 1) Check email exists
+        User byEmail = userService.findByEmail(email);
+        if (byEmail == null) {
+            mv.addObject("emailError", "No account found for that email.");
+            return mv;
+        }
+
+        // 2) Check password correctness
+        if (!userService.passwordMatches(byEmail, rawPassword)) {
+            mv.addObject("passwordError", "Incorrect password.");
+            // Keep email pre-filled so user doesn’t need to retype it
+            User prefill = new User();
+            prefill.setEmailAddress(email);
+            mv.addObject("user", prefill);
+            return mv;
+        }
+
+        // 3) Success — log in and redirect by role
+        session.setAttribute("loggedInUser", byEmail);
+        String type = byEmail.getUserType();
+        if ("admin".equalsIgnoreCase(type)) {
+            mv.setViewName("redirect:/MainGallery/adminDashboard");
+        }
+        else if ("student".equalsIgnoreCase(type)) {
+            mv.setViewName("redirect:/MainGallery/studentDashboard");
+        }
+        else if ("senioradmin".equalsIgnoreCase(type)) {
+            mv.setViewName("redirect:/MainGallery/seniorAdminDashboard");
+        }
+        else if ("employer".equalsIgnoreCase(type)) {
+            mv.setViewName("redirect:/MainGallery/employerDashboard");
         } else {
-            // Return to login page with error message
-            modelAndView.setViewName("login");
-            modelAndView.addObject("error", "Invalid username or password");
+            mv.setViewName("redirect:/MainGallery/dashboard");
+        }
+        mv.addObject("loggedInUser", byEmail.getEmailAddress());
+        return mv;
+    }
+
+
+    @GetMapping("/profile")
+    public ModelAndView viewProfile(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView("profile");
+
+        // Retrieve the logged-in user from the session
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        // Check if a user is logged in
+        if (loggedInUser != null) {
+            // Pass user details to the view
+            modelAndView.addObject("user", loggedInUser);
+        } else {
+            // If no user is logged in, redirect to the login page
+            modelAndView.setViewName("redirect:/Login");
         }
         return modelAndView;
     }
+
+
 
 
     // Display Registration Page

@@ -2,18 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <style>
+        .error { color: red; font-size: 0.9em; margin: 4px 0 10px 0; }
+        label { display:block; margin-top:10px; }
+        input { padding:6px; width: 280px; max-width: 100%; }
+        button { margin-top:12px; padding:8px 14px; }
+    </style>
 </head>
 <body>
 <h1>Login</h1>
+
 <form th:action="@{/MainGallery/Login}" th:object="${user}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="userName" th:field="*{userName}" required>
-    <br>
+
+    <!-- Email -->
+    <label for="emailAddress">Email:</label>
+    <input type="text" id="emailAddress" name="emailAddress" th:field="*{emailAddress}" required />
+    <div class="error" th:if="${emailError}" th:text="${emailError}"></div>
+
+    <!-- Password -->
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" th:field="*{password}" required>
-    <br>
+    <input type="password" id="password" name="password" th:field="*{password}" required />
+    <div class="error" th:if="${passwordError}" th:text="${passwordError}"></div>
+
     <button type="submit">Login</button>
 </form>
-<p th:if="${error}" th:text="${error}"></p>
+
+<!-- Optional generic fallback -->
+<p class="error" th:if="${error}" th:text="${error}"></p>
+
 </body>
 </html>

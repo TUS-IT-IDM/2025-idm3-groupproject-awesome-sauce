@@ -4,7 +4,31 @@
     <meta charset="UTF-8">
     <title>Employer Dashboard</title>
 </head>
+
+<header class="header" th:with="user=${session.loggedInUser}">
+    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+
+    <nav class="nav-items">
+        <a th:href="@{/MainGallery/HomePage}">Home</a>
+
+        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
+        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
+
+        <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
+        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}">Logout</a>
+
+        <div class="icon-button">
+            <a th:href="${user != null} ? @{/MainGallery/profile} : @{/MainGallery/Login}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</header>
+
+
 <body>
+
+<h1>Welcome to the Employer Dashboard!</h1>
 
 </body>
 </html>
