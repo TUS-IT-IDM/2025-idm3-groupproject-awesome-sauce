@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .profile-container {
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px 35px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      max-width: 600px;
+    }
+    h1 {
+      color: #222;
+    }
+    p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .button-group {
+      margin-top: 20px;
+    }
+    a.button {
+      display: inline-block;
+      margin-right: 10px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    a.button:hover {
+      background-color: #0056b3;
+    }
+    a.logout {
+      background-color: #dc3545;
+    }
+    a.logout:hover {
+      background-color: #b02a37;
+    }
+  </style>
+</head>
+<body>
+
+<div class="profile-container" th:if="${user != null}">
+  <h1>Welcome, <span th:text="${user.firstName}">[First Name]</span></h1>
+
+  <p><strong>Email:</strong> <span th:text="${user.emailAddress}">[Email]</span></p>
+  <p><strong>Organization:</strong> <span th:text="${user.organization}">[Organization]</span></p>
+  <p><strong>User Type:</strong> <span th:text="${user.userType}">[User Type]</span></p>
+
+  <div class="button-group">
+    <!-- ✅ Goes back home, session remains active -->
+    <a class="button" th:href="@{/MainGallery/HomePage}">Back to Home</a>
+
+    <!-- Optional logout -->
+    <a class="button logout" th:href="@{/MainGallery/Logout}">Logout</a>
+  </div>
+</div>
+
+<div th:if="${user == null}">
+  <h2>You are not logged in.</h2>
+  <a class="button" th:href="@{/MainGallery/Login}">Go to Login</a>
+</div>
+
+</body>
+</html>
+

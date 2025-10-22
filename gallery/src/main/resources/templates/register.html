@@ -12,17 +12,24 @@
     <label for="surname">Surname:</label>
     <input type="text" id="surname" name="surname" th:field="*{surname}">
     <br>
-    <label for="emailAddress">Email:</label>
-    <input type="email" id="emailAddress" name="emailAddress" th:field="*{emailAddress}" required>
-    <br>
+
     <label for="userName">Username:</label>
     <input type="text" id="userName" name="userName" th:field="*{userName}" required>
     <br>
+    <label for="emailAddress">Email:</label>
+    <input type="email" id="emailAddress" name="emailAddress" th:field="*{emailAddress}" required>
+    <br>
+
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" th:field="*{password}" required>
     <br>
     <label for="organization">Organization:</label>
     <input type="text" id="organization" name="organization" th:field="*{organization}">
+
+    <select>
+        <li>Student</li>
+        <li>Employer</li>
+    </select>
 
     <br>
     <button type="submit">Register</button>
