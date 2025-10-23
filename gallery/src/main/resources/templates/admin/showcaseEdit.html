@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Showcase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        form > div { margin-bottom: 12px; }
+        label { display:block; margin-bottom: 4px; }
+        input[type=text], textarea, select, input[type=file] { width: 360px; max-width: 100%; padding: 6px; }
+        button, a.button { padding: 8px 14px; text-decoration: none; border:none; border-radius:6px; color:#fff; cursor:pointer; }
+        button { background:#0d6efd; }
+        a.button { background:#6c757d; }
+        img.preview { margin-top:10px; width:200px; border-radius:6px; }
+    </style>
+</head>
+<body>
+
+<h1>Edit Showcase</h1>
+
+<form th:action="@{'/MainGallery/admin/showcases/edit/' + ${showcase.showcaseId}}"
+      th:object="${showcase}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div>
+        <label for="name">Name</label>
+        <input id="name" type="text" th:field="*{name}" required />
+    </div>
+
+    <div>
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" rows="4"></textarea>
+    </div>
+
+    <div>
+        <label>Current Image</label><br>
+        <img class="preview" th:src="@{'/assets/images/showcases/' + ${showcase.image}}" alt="Current image">
+    </div>
+
+    <div>
+        <label for="imageFile">Replace Image (optional)</label>
+        <input id="imageFile" type="file" name="imageFile" accept="image/*">
+    </div>
+
+    <div>
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}">
+            <option value="LIVE">LIVE</option>
+            <option value="PENDING">PENDING</option>
+        </select>
+    </div>
+
+    <button type="submit">Save Changes</button>
+    <a class="button" th:href="@{/MainGallery/admin/showcases}">Cancel</a>
+</form>
+
+</body>
+</html>

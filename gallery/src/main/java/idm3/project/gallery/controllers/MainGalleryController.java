@@ -58,8 +58,23 @@ public class MainGalleryController {
 
     @GetMapping("/adminDashboard")
     public ModelAndView adminDashboard() {
-        return new ModelAndView("adminDashboard");
+        ModelAndView mav = new ModelAndView("adminDashboard");
+
+        // Stats
+        mav.addObject("totalShowcases", showcaseService.totalShowcases());
+        mav.addObject("liveShowcases",  showcaseService.liveShowcases());
+        mav.addObject("draftShowcases", showcaseService.draftShowcases());
+
+        // Projects
+        mav.addObject("totalProjects", projectService.totalProjects());
+
+        // Recent
+        mav.addObject("recentShowcases", showcaseService.recentShowcases());
+        mav.addObject("recentProjects",  projectService.recentProjects());
+
+        return mav;
     }
+
 
     @GetMapping("/seniorAdminDashboard")
     public ModelAndView seniorAdminDashboard() {
