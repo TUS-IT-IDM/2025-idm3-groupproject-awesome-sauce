@@ -101,10 +101,26 @@
 
         <div class="card-footer bg-white border-0 text-end">
           <a th:href="@{'/project/projectDetails/' + ${project.projectId}}"
-             class="btn btn-outline-primary btn-sm">
+             class="btn btn-outline-primary btn-sm me-2">
             View Details
           </a>
+
+          <!-- 🚫 Remove from Showcase (Admin Only) -->
+          <th:block th:if="${session.loggedInUser != null and #strings.equalsIgnoreCase(session.loggedInUser.userType, 'admin')}">
+            <form th:action="@{/MainGallery/browseShowcase/{showcaseId}/removeProject/{projectId}(showcaseId=${showcase.showcaseId}, projectId=${project.projectId})}"
+                  method="post"
+                  style="display:inline-block;"
+                  onsubmit="return confirm('Remove this project from the showcase?');">
+              <button type="submit" class="btn btn-outline-danger btn-sm">
+                Remove
+              </button>
+            </form>
+          </th:block>
         </div>
+
+
+
+
       </div>
     </div>
   </div>

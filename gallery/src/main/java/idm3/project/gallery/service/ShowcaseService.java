@@ -2,6 +2,7 @@ package idm3.project.gallery.service;
 
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.repository.ShowcaseRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,6 +72,16 @@ public class ShowcaseService {
         }
         return showcaseRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
     }
+
+    @Transactional
+    public void removeProjectFromShowcase(Long showcaseId, Long projectId) {
+        Showcase showcase = showcaseRepository.findById(showcaseId).orElse(null);
+        if (showcase != null && showcase.getProjects() != null) {
+            showcase.getProjects().removeIf(p -> p.getProjectId() == projectId);
+            showcaseRepository.save(showcase);
+        }
+    }
+
 
 
 }

@@ -227,6 +227,13 @@ public class MainGalleryController {
         return mav;
     }
 
+    @PostMapping("/browseShowcase/{showcaseId}/removeProject/{projectId}")
+    public String removeProjectFromShowcase(@PathVariable("showcaseId") Long showcaseId,
+                                            @PathVariable("projectId") Long projectId) {
+        showcaseService.removeProjectFromShowcase(showcaseId, projectId);
+        return "redirect:/MainGallery/browseShowcase/" + showcaseId;
+    }
+
 
 
 
