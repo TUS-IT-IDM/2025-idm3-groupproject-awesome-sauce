@@ -15,6 +15,9 @@ public interface ShowcaseRepository extends CrudRepository<Showcase, Long> {
     long count();                                   // inherited, but explicit use is fine
     long countByStatus(String status);
     List<Showcase> findTop5ByOrderByShowcaseIdDesc();
+
+    List<Showcase> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+
 }
 
 

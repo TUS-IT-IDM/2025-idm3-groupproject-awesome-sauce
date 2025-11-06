@@ -5,6 +5,8 @@ import idm3.project.gallery.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -52,4 +54,17 @@ public class UserService {
         userRepository.save(user);
         return true;
     }
+
+    // Search users by name, email, or organization
+    public List<User> searchUsers(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return userRepository.findAll();
+        }
+
+        return userRepository.findByFirstNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrEmailAddressContainingIgnoreCaseOrOrganizationContainingIgnoreCase(
+                keyword, keyword, keyword, keyword
+        );
+    }
+
+
 }

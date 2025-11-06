@@ -65,4 +65,12 @@ public class ShowcaseService {
         return showcaseRepository.findById(showcaseId).orElse(null);
     }
 
+    public List<Showcase> searchShowcases(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return findAll(); // return all showcases if empty
+        }
+        return showcaseRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+    }
+
+
 }
