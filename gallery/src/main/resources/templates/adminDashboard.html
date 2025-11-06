@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-kpi { border-radius: 12px; }
+        .table img.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
+    </style>
 </head>
 
+<body>
 <header class="header" th:with="user=${session.loggedInUser}">
     <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
 
@@ -32,10 +38,107 @@
     </nav>
 </header>
 
+<main class="container my-4">
 
-<body>
+    <h1 class="mb-4">Admin Dashboard</h1>
 
-<h1>Welcome to the Admin Dashboard!</h1>
+    <!-- Quick Actions -->
+    <div class="mb-3 d-flex gap-2 flex-wrap">
+        <a class="btn btn-primary" th:href="@{/MainGallery/admin/showcases}">Manage Showcases</a>
+        <a class="btn btn-outline-primary" th:href="@{/MainGallery/admin/showcases/create}">+ Create Showcase</a>
+        <!-- Add more: Manage Projects, Users, Settings -->
+        <!-- <a class="btn btn-secondary" th:href="@{/MainGallery/admin/projects}">Manage Projects</a> -->
+    </div>
 
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Total Showcases</div>
+                    <div class="fs-3 fw-bold" th:text="${totalShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Live</div>
+                    <div class="fs-3 fw-bold" th:text="${liveShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Pending</div>
+                    <div class="fs-3 fw-bold" th:text="${draftShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Total Projects</div>
+                    <div class="fs-3 fw-bold" th:text="${totalProjects}">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Showcases -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-semibold">Recent Showcases</div>
+        <div class="card-body p-0">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Thumbnail</th><th>Name</th><th>Status</th><th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${recentShowcases}">
+                    <td th:text="${s.showcaseId}">1</td>
+                    <td><img class="thumb" th:src="@{'/assets/images/showcases/' + ${s.image}}" th:alt="${s.name}"></td>
+                    <td th:text="${s.name}">Name</td>
+                    <td th:text="${s.status}">LIVE</td>
+                    <td th:text="${s.description}">Desc…</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentShowcases)}">
+                    <td colspan="5"><em>No showcases yet.</em></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Projects -->
+    <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Recent Projects</div>
+        <div class="card-body p-0">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Name</th><th>Category</th><th>Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${recentProjects}">
+                    <td th:text="${p.projectId}">1</td>
+                    <td th:text="${p.projectName}">Project</td>
+                    <td th:text="${p.category}">Category</td>
+                    <td th:text="${p.creationDate}">2025-01-01</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentProjects)}">
+                    <td colspan="4"><em>No projects yet.</em></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

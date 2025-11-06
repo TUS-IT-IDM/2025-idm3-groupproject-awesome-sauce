@@ -10,7 +10,14 @@ import java.util.List;
 public interface ShowcaseRepository extends CrudRepository<Showcase, Long> {
 
     List<Showcase> findByStatus(String status);
+
+    // stats + recent
+    long count();                                   // inherited, but explicit use is fine
+    long countByStatus(String status);
+    List<Showcase> findTop5ByOrderByShowcaseIdDesc();
 }
+
+
 
 
 
