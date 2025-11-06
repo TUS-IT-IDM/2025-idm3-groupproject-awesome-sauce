@@ -61,4 +61,8 @@ public class ShowcaseService {
     public long draftShowcases() { return showcaseRepository.countByStatus("PENDING"); } // or PENDING if you use that
     public List<Showcase> recentShowcases() { return showcaseRepository.findTop5ByOrderByShowcaseIdDesc(); }
 
+    public Showcase findById(Long showcaseId) {
+        return showcaseRepository.findById(showcaseId).orElse(null);
+    }
+
 }

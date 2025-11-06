@@ -12,6 +12,12 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
     long count();
     List<Project> findAllByOrderByCreationDateDesc();
     List<Project> findTop5ByOrderByCreationDateDesc();
+
+    List<Project> findByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(
+            String name, String description);
+
+
+
 }
 
 
