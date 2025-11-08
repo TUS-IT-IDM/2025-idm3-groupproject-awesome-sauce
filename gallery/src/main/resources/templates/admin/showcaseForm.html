@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Showcase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        form > div { margin-bottom: 12px; }
+        label { display:block; margin-bottom: 4px; }
+        input[type=text], textarea, select, input[type=file] {
+            width: 360px; max-width: 100%; padding: 6px;
+        }
+        button, a.button {
+            padding: 8px 14px;
+            text-decoration: none;
+            background:#0d6efd;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+        a.button { background: #6c757d; }
+        img#preview {
+            display: none;
+            margin-top: 10px;
+            width: 200px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+<h1>Create Showcase</h1>
+
+<!-- enctype added for file upload -->
+<form th:action="@{/MainGallery/admin/showcases/create}"
+      th:object="${showcase}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div>
+        <label for="name">Name</label>
+        <input id="name" type="text" th:field="*{name}" required />
+    </div>
+
+    <div>
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" rows="4"></textarea>
+    </div>
+
+    <!-- ✅ Upload image button + preview -->
+    <div>
+        <label for="imageFile">Upload Image</label>
+        <input id="imageFile" type="file" name="imageFile" accept="image/*" required onchange="previewImage(event)">
+        <img id="preview" src="#" alt="Image Preview">
+    </div>
+
+    <div>
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}">
+            <option value="LIVE">LIVE</option>
+            <option value="PENDING">PENDING</option>
+        </select>
+    </div>
+
+    <button type="submit">Create</button>
+    <a class="button" th:href="@{/MainGallery/adminDashboard}">Cancel</a>
+</form>
+
+<!-- ✅ Small JS snippet for live preview -->
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('preview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
+</body>
+</html>

@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/lcstyle.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .card-kpi { border-radius: 12px; }
+        .table img.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
+    </style>
 </head>
 
+<body>
 <header class="header" th:with="user=${session.loggedInUser}">
     <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
 
@@ -29,13 +39,164 @@
                 <i class="fas fa-user"></i>
             </a>
         </div>
+
     </nav>
+
+
 </header>
 
+<main class="container my-4">
 
-<body>
+    <h1 class="mb-4">Admin Dashboard</h1>
 
-<h1>Welcome to the Admin Dashboard!</h1>
 
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Total Showcases</div>
+                    <div class="fs-3 fw-bold" th:text="${totalShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Live</div>
+                    <div class="fs-3 fw-bold" th:text="${liveShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Pending</div>
+                    <div class="fs-3 fw-bold" th:text="${draftShowcases}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Total Projects</div>
+                    <div class="fs-3 fw-bold" th:text="${totalProjects}">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== -->
+    <!-- 🔍 SHOWCASE MANAGEMENT SECTION -->
+    <!-- ====================== -->
+    <div class="card mt-5 shadow-sm">
+        <div class="card-body">
+            <h3 class="mb-3">Showcases</h3>
+
+            <!-- Search Form -->
+            <form th:action="@{/MainGallery/admin/showcases/searchShowcases}" method="get" class="d-flex gap-2 mb-4">
+                <input type="text" name="keyword"
+                       th:value="${keyword}"
+                       placeholder="Search by showcase name or description..."
+                       class="form-control"
+                       style="max-width: 400px;">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <!-- Quick Actions -->
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a class="btn btn-outline-primary" th:href="@{/MainGallery/admin/showcases/create}">+ Create Showcase</a>
+                <!-- Add more: Manage Projects, Users, Settings -->
+                <!-- <a class="btn btn-secondary" th:href="@{/MainGallery/admin/projects}">Manage Projects</a> -->
+            </div>
+
+            <!-- Results / Recent Table -->
+            <div>
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Thumbnail</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 🧭 Use searchResults if available, otherwise recentShowcases -->
+                    <tr th:each="showcase : ${searchResults != null ? searchResults : recentShowcases}">
+                        <td th:text="${showcase.showcaseId}"></td>
+                        <td>
+                            <img class="thumb"
+                                 th:src="@{'/assets/images/showcases/' + ${showcase.image}}"
+                                 th:alt="${showcase.name}">
+                        </td>
+                        <td th:text="${showcase.name}"></td>
+                        <td th:text="${showcase.status}"></td>
+                        <td th:text="${showcase.description}"></td>
+
+                        <!-- 🎯 Action Buttons -->
+                        <td class="text-center">
+                            <!-- Edit -->
+                            <a th:href="@{/MainGallery/admin/showcases/edit/{id}(id=${showcase.showcaseId})}"
+                               class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+
+                            <!-- Delete -->
+                            <form th:action="@{/MainGallery/admin/showcases/delete/{id}(id=${showcase.showcaseId})}"
+                                  method="post"
+                                  style="display:inline-block;"
+                                  onsubmit="return confirm('Are you sure you want to delete this showcase?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Empty message -->
+                    <tr th:if="${#lists.isEmpty(searchResults != null ? searchResults : recentShowcases)}">
+                        <td colspan="6" class="text-center text-muted">
+                            <span th:if="${keyword == null || keyword.isEmpty()}">No showcases yet.</span>
+                            <span th:if="${keyword != null && !keyword.isEmpty()}">
+              No showcases found for "<span th:text="${keyword}"></span>".
+            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <h4 style="color: white;">LOGO GOES HERE</h4><br>
+    <div class="copy">© 2024 TUS GALLERY</div>
+
+    <div class="bottom-links">
+        <div class="links">
+            <span>More Info</span>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <div class="links">
+            <span>Social Links</span>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
