@@ -1,4 +1,3 @@
-// src/main/java/idm3/project/gallery/service/SavedProjectService.java
 package idm3.project.gallery.service;
 
 import idm3.project.gallery.model.Project;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SavedProjectService {
@@ -19,6 +19,7 @@ public class SavedProjectService {
 
     @Autowired
     private ProjectRepository projectRepo;
+
 
     public enum SaveResult { SAVED, ALREADY_SAVED, PROJECT_NOT_FOUND }
 
@@ -55,17 +56,13 @@ public class SavedProjectService {
         return savedRepo.findAllByEmployerOrderByIdDesc(employer);
     }
 
-    // ✅ NEW METHOD — update note for a saved project
     public void updateNoteForSavedProject(User employer, Long projectId, String newNote) {
         if (employer == null || projectId == null) return;
 
         Project project = projectRepo.findById(projectId).orElse(null);
         if (project == null) return;
 
-        // Trim note to avoid null or whitespace-only entries
         String cleanNote = (newNote == null) ? "" : newNote.trim();
-
-        // Update directly in DB using repository’s query
         savedRepo.updateNote(employer, project, cleanNote);
     }
 
@@ -76,6 +73,37 @@ public class SavedProjectService {
             return true;
         }
         return false;
+    }
+
+    // ✅ New helper to fetch all projects (used by search)
+    public List<Project> getSavedProjectsForEmployer(User employer) {
+        List<SavedProject> savedList = savedRepo.findByEmployer(employer);
+        return savedList.stream()
+                .map(SavedProject::getProject)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Keyword search through saved projects
+    public List<Project> searchSavedProjects(User employer, String keyword) {
+        if (employer == null) return List.of();
+
+        List<Project> savedProjects = getSavedProjectsForEmployer(employer);
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return savedProjects;
+        }
+
+        String lower = keyword.toLowerCase();
+        return savedProjects.stream()
+                .filter(p -> (p.getProjectName() != null && p.getProjectName().toLowerCase().contains(lower))
+                        || (p.getProjectDescription() != null && p.getProjectDescription().toLowerCase().contains(lower))
+                        || (p.getCategory() != null && p.getCategory().toLowerCase().contains(lower)))
+                .collect(Collectors.toList());
+    }
+
+    public SavedProject findByEmployerAndProjectId(User employer, Long projectId) {
+        if (employer == null || projectId == null) return null;
+        return savedRepo.findByEmployerAndProjectId(employer, projectId);
     }
 
 }

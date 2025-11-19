@@ -88,17 +88,7 @@ public class MainGalleryController {
         return "redirect:/MainGallery/Login";
     }
 
-    @GetMapping("/profile")
-    public ModelAndView viewProfile(HttpSession session) {
-        ModelAndView mav = new ModelAndView("profile");
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null) {
-            mav.addObject("user", loggedInUser);
-        } else {
-            mav.setViewName("redirect:/MainGallery/Login");
-        }
-        return mav;
-    }
+
 
     // Registration
     @GetMapping("/Register")
@@ -198,4 +188,45 @@ public class MainGalleryController {
             e.printStackTrace();
         }
     }
+
+    @GetMapping("/searchProjects")
+    public ModelAndView searchProjects(@RequestParam(value = "keyword", required = false) String keyword) {
+        List<Project> searchResults = projectService.searchProjects(keyword);
+        ModelAndView mav = new ModelAndView("searchResults");
+        mav.addObject("projects", searchResults);
+        mav.addObject("keyword", keyword);
+        return mav;
+    }
+
+    @GetMapping("/browseShowcase/{showcaseId}")
+    public ModelAndView viewShowcaseById(@PathVariable("showcaseId") Long showcaseId) {
+        ModelAndView mav = new ModelAndView("browseShowcase");
+
+        // 🧭 Get the showcase from the ShowcaseService
+        Showcase showcase = showcaseService.findById(showcaseId);
+
+        if (showcase != null) {
+            // ✅ This is where showcase.getProjects() is used
+            mav.addObject("showcase", showcase);
+            mav.addObject("projects", showcase.getProjects());
+        } else {
+            mav.addObject("error", "Showcase not found");
+            mav.addObject("projects", List.of()); // Empty list fallback
+        }
+
+        return mav;
+    }
+
+    @PostMapping("/browseShowcase/{showcaseId}/removeProject/{projectId}")
+    public String removeProjectFromShowcase(@PathVariable("showcaseId") Long showcaseId,
+                                            @PathVariable("projectId") Long projectId) {
+        showcaseService.removeProjectFromShowcase(showcaseId, projectId);
+        return "redirect:/MainGallery/browseShowcase/" + showcaseId;
+    }
+
+
+
+
+
+
 }

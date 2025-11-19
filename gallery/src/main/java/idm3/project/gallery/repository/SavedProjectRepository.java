@@ -3,27 +3,33 @@ package idm3.project.gallery.repository;
 import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.SavedProject;
 import idm3.project.gallery.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface SavedProjectRepository extends CrudRepository<SavedProject, Long> {
+@Repository
+public interface SavedProjectRepository extends JpaRepository<SavedProject, Long> {
 
-    // Exists check for (employer, project) pair
+    // 🔹 Check if a project is already saved by this employer
     boolean existsByEmployerAndProject(User employer, Project project);
 
-    // Fetch a single saved entry for update/read
+    // 🔹 Find a specific saved project
     Optional<SavedProject> findByEmployerAndProject(User employer, Project project);
 
-    // IDs-only (handy for disabling "Save" buttons)
-    @Query("select sp.project.projectId from SavedProject sp where sp.employer = :employer")
+    // 🔹 Fetch only project IDs (used to disable "Save" button in UI)
+    @Query("""
+           select sp.project.projectId 
+           from SavedProject sp 
+           where sp.employer = :employer
+           """)
     List<Long> findProjectIdsByEmployer(User employer);
 
-    // Full objects (with joined project) for dashboard
+    // 🔹 Fetch all saved projects with joined Project data
     @Query("""
            select sp
            from SavedProject sp
@@ -33,21 +39,31 @@ public interface SavedProjectRepository extends CrudRepository<SavedProject, Lon
            """)
     List<SavedProject> findAllByEmployerOrderByIdDesc(User employer);
 
-    // Update note in-place
+    // 🔹 Update note for a saved project (inline update)
     @Modifying
     @Transactional
     @Query("""
            update SavedProject sp
            set sp.note = :note
-           where sp.employer = :employer and sp.project = :project
+           where sp.employer = :employer 
+             and sp.project = :project
            """)
     int updateNote(User employer, Project project, String note);
 
-    // Unsave (delete) a project for this employer
+    // 🔹 Delete a project from employer’s saved list (not the project itself)
     @Transactional
     void deleteByEmployerAndProject(User employer, Project project);
 
-    @Query("SELECT sp FROM SavedProject sp WHERE sp.employer = :employer AND sp.project.projectId = :projectId")
+    // 🔹 Find by employer and projectId (for drill-down or quick access)
+    @Query("""
+           select sp 
+           from SavedProject sp 
+           join fetch sp.project 
+           where sp.employer = :employer 
+             and sp.project.projectId = :projectId
+           """)
     SavedProject findByEmployerAndProjectId(User employer, Long projectId);
 
+    // 🔹 Fetch all SavedProject entries for one employer (used in search)
+    List<SavedProject> findByEmployer(User employer);
 }
