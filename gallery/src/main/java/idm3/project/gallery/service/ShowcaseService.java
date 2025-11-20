@@ -1,5 +1,6 @@
 package idm3.project.gallery.service;
 
+import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.repository.ShowcaseRepository;
 import jakarta.transaction.Transactional;
@@ -20,9 +21,6 @@ public class ShowcaseService {
     // Directory for uploaded showcase images
     private static final String UPLOAD_DIR = "src/main/resources/static/assets/images/showcases/";
 
-    // ================================================================
-    // 🔹 CRUD OPERATIONS
-    // ================================================================
 
     public List<Showcase> findAll() {
         return (List<Showcase>) showcaseRepository.findAll();

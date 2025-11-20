@@ -9,97 +9,94 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="/assets/css/lcstyle.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/css/navBar.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 
 <body>
 
-<!-- HEADER -->
-<header class="header" th:with="user=${session.loggedInUser}">
-  <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" th:with="user=${session.loggedInUser}">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+      <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
+    </a>
 
-  <nav class="nav-items" th:with="user=${session.loggedInUser}">
-    <a th:href="@{/MainGallery/HomePage}">Home</a>
-    <a th:href="@{/MainGallery/about}">About</a>
-    <a th:href="@{/MainGallery/contact}">Contact</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Not logged in -->
-    <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
-    <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Login</a>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
 
-    <!-- Logged in: role-aware Dashboard + Logout -->
-    <span th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
-      <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
-      <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
-      <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
-      <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
-      <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
-    </span>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+        </li>
 
-    <!-- Logout -->
-    <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">Logout</a>
+        <li>
+        <span class ="dashboard" th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
+    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
+  </span>
+        </li>
 
-    <!-- Profile Icon -->
-    <div class="icon-button" th:with="isLoggedIn=${user != null}">
-      <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
-        <i class="fas fa-user"></i>
+      </ul>
+
+      <!-- Profile Icon -->
+      <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
       </a>
-      <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
-        <i class="fas fa-user"></i>
+      <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
       </a>
     </div>
+  </div>
+</nav>
 
-    <!-- 🔍 PROJECT SEARCH SECTION -->
-    <div class="container mt-5">
+<!-- End of NavBar -->
 
-      <!-- Search Form -->
-      <form th:action="@{/MainGallery/searchProjects}" method="get" class="d-flex gap-2 mb-4">
-        <input type="text" name="keyword"
-               th:value="${keyword}"
-               placeholder="Search projects..."
-               class="form-control"
-               style="max-width: 400px;">
-        <button><i class="fas fa-search"></i></a></button>
-      </form>
+<!-- Add top padding so content isn't hidden under fixed navbar -->
+<style>
+  body {
+    padding-top: 50px;
+  }
+  .nav-link {
+    color: #4c6873 !important;
+    font-weight: 500;
+    margin: 0 6px;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: #005b73 !important;
+  }
+  .navbar-brand span {
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+  }
 
-      <!-- Results Table -->
-      <div th:if="${projects != null}">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-          <tr>
-            <th>ID</th>
-            <th>Project Name</th>
-            <th>Description</th>
-            <th>Owner</th>
-            <th>Image</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="project : ${projects}">
-            <td th:text="${project.projectId}"></td>
-            <td th:text="${project.projectName}"></td>
-            <td th:text="${project.projectDescription}"></td>
-            <td th:text="${project.user?.emailAddress}">Unknown</td>
-            <td>
-              <img th:src="@{'/assets/images/projects/thumbnail/thumb_' + ${project.projectHeroImage}}"
-                   alt="Project Image"
-                   width="100"
-                   style="object-fit: cover;">
-            </td>
-          </tr>
-          <tr th:if="${#lists.isEmpty(projects)}">
-            <td colspan="5" class="text-center text-muted">
-              No projects found for "<span th:text="${keyword}"></span>".
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  /*<!-- Nav Bar 'About' Slide Animation -->*/
 
-  </nav>
-</header>
-<!-- /HEADER -->
+  /*html {*/
+  /*  scroll-behavior: smooth;*/
+  /*}*/
+
+  /*:target {*/
+  /*  scroll-margin-top: 80px; !* adjusts for fixed navbar height *!*/
+  /*}*/
+
+</style>
+
 
 
 
@@ -110,79 +107,120 @@
   <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
 </div>
 
-<!-- Carousel -->
-<div id="demo" class="carousel slide" data-bs-ride="carousel">
+<!-- Showcase Carousel Hero -->
+<div id="showcaseHeroCarousel" class="carousel slide showcase-hero" data-bs-ride="carousel">
+
+  <!-- Indicators -->
   <div class="carousel-indicators">
-    <div th:each="liveShowcase, iterStat : ${AllLiveShowcases}">
-      <button type="button" data-bs-target="#demo"
-              th:data-bs-slide-to="${iterStat.index}"
-              th:classappend="${iterStat.first ? 'active' : ''}"></button>
-    </div>
+    <button th:each="s,iter : ${AllLiveShowcases}"
+            type="button"
+            data-bs-target="#showcaseHeroCarousel"
+            th:data-bs-slide-to="${iter.index}"
+            th:classappend="${iter.first ? 'active' : ''}">
+    </button>
   </div>
 
+  <!-- Background Slides -->
   <div class="carousel-inner">
-    <div th:each="liveShowcase, iterStat : ${AllLiveShowcases}"
-         th:classappend="${iterStat.first ? 'carousel-item active' : 'carousel-item'}">
 
-      <img th:src="@{'/assets/images/showcases/thumbnail/thumb_' + ${liveShowcase.image}}"
-           alt="Showcase Image"
-           class="d-block w-100"
-           style="height: 400px; object-fit: cover;" />
+    <div th:each="s,iter : ${AllLiveShowcases}"
+         th:class="${iter.first} ? 'carousel-item active showcase-slide' : 'carousel-item showcase-slide'">
 
-      <div class="carousel-caption">
-        <h5 th:text="${liveShowcase.name}"></h5>
-        <p th:text="${liveShowcase.description}"></p>
+      <img th:src="@{'/assets/images/showcases/thumbnail/thumb_' + ${s.image}}"
+           class="d-block w-100 showcase-bg"
+           alt="Showcase Image">
 
-        <a th:if="${liveShowcase.showcaseId != null}"
-           th:href="@{/MainGallery/browseShowcase/{id}(id=${liveShowcase.showcaseId})}"
-           class="btn btn-primary">
-          Browse the Showcase
-        </a>
-      </div>
+      <div class="showcase-overlay"></div>
     </div>
+
   </div>
 
+  <!-- Static Foreground Content -->
+  <div class="showcase-hero-content">
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
+    <div class="hero-box title-box">
+      <span class="hero-title"
+            th:text="${showcase != null ? showcase.name : 'FutureProof'}">
+</span>
 
-<!-- Intro Section -->
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-      <div class="work text-center">
-        <i class="fas fa-layer-group" style="font-size: 2rem; margin-top: 20px;"></i>
-        <p class="work-heading" style="font-size: 24px;"><strong>Projects</strong></p>
-        <p class="work-text">Our mission is to provide a stage where students can showcase their creativity, skills, and innovative projects to a global audience.</p>
-      </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-      <div class="work text-center">
-        <i class="fas fa-seedling" style="font-size: 2rem; margin-top: 20px;"></i>
-        <p class="work-heading" style="font-size: 24px;"><strong>Connect</strong></p>
-        <p class="work-text">We are a dynamic platform proudly offered by TUS, dedicated to empowering students and bridging the gap between education and industry.</p>
-      </div>
+
+    <div class="hero-box desc-box">
+      <p class="hero-desc"
+         th:text="${showcase != null ? showcase.description
+                   : 'A comprehensive platform to help hirers and creators navigate the creative world.'}">
+      </p>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-      <div class="work text-center">
-        <i class="fas fa-circle-nodes" style="font-size: 2rem; margin-top: 20px;"></i>
-        <p class="work-heading" style="font-size: 24px;"><strong>Network</strong></p>
-        <p class="work-text">If you're an employer seeking the brightest minds, TUS Gallery is your trusted partner on this exciting educational and professional adventure.</p>
-      </div>
+
+    <div class="hero-buttons">
+      <a th:href="@{/MainGallery/browseShowcases}" class="hero-btn">
+        BROWSE SHOWCASES <i class="fa-solid fa-magnifying-glass"></i>
+      </a>
+
+      <a th:href="@{/MainGallery/searchProjects}" class="hero-btn">
+        BROWSE PROJECTS <i class="fa-solid fa-magnifying-glass"></i>
+      </a>
     </div>
+
   </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#showcaseHeroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#showcaseHeroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
 </div>
+
+<!-- Optional Search -->
+<form th:action="@{/MainGallery/searchProjects}" method="get" class="d-flex ms-3 me-3" role="search">
+  <input type="text" name="keyword"
+         th:value="${keyword}"
+         placeholder="Search projects..."
+         class="form-control rounded-pill"
+         style="max-width: 220px;">
+</form>
+
+<!--&lt;!&ndash; Intro Section &ndash;&gt;-->
+<!--<div class="container mt-4">-->
+<!--  <div class="row">-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-layer-group" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <section id="about">-->
+<!--          <div class="container">-->
+<!--            <h2 class="mb-3">About Us</h2>-->
+<!--            <p>-->
+<!--              FutureProof is dedicated to connecting students, employers, and educators-->
+<!--              through innovation and collaboration...-->
+<!--            </p>-->
+<!--          </div>-->
+<!--        </section>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-seedling" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <p class="work-heading" style="font-size: 24px;"><strong>Connect</strong></p>-->
+<!--        <p class="work-text">We are a dynamic platform proudly offered by TUS, dedicated to empowering students and bridging the gap between education and industry.</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-circle-nodes" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <p class="work-heading" style="font-size: 24px;"><strong>Network</strong></p>-->
+<!--        <p class="work-text">If you're an employer seeking the brightest minds, TUS Gallery is your trusted partner on this exciting educational and professional adventure.</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 
 <!-- Projects Section -->
 <div class="container mt-4">
-  <h3 class="text-left mb-4">Recently Added Projects</h3>
+
   <div class="row">
     <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="project : ${AllProjectsRecentFirst}">
       <div class="card">
@@ -228,7 +266,6 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <h4 style="color: white;">LOGO GOES HERE</h4><br>
   <div class="copy">© 2024 TUS GALLERY</div>
 
   <div class="bottom-links">

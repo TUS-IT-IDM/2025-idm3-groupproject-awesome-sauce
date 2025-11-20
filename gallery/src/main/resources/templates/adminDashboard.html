@@ -5,71 +5,87 @@
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/assets/css/lcstyle.css">
-    <style>
-        .card-kpi { border-radius: 12px; }
-        .table img.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/assets/css/navBar.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/admin.css">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/images/website/Future_Proof_Logo_Icon.png">
 </head>
 
 <body>
-<header class="header" th:with="user=${session.loggedInUser}">
-    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" th:with="user=${session.loggedInUser}">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+            <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
+        </a>
 
-    <nav class="nav-items">
-        <a th:href="@{/MainGallery/HomePage}">Home</a>
-        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
-        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
-        <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
-        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">Logout</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <div class="icon-button" th:with="isLoggedIn=${user != null}">
-            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}"><i class="fas fa-user"></i></a>
-            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}"><i class="fas fa-user"></i></a>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
+
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+                </li>
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+                </li>
+
+            </ul>
+
+            <!-- Optional Search -->
+            <form th:action="@{/MainGallery/searchProjects}" method="get" class="d-flex ms-3 me-3" role="search">
+                <input type="text" name="keyword"
+                       th:value="${keyword}"
+                       placeholder="Search projects..."
+                       class="form-control rounded-pill"
+                       style="max-width: 220px;">
+            </form>
+
+            <!-- Profile Icon -->
+            <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
+            </a>
+            <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
+            </a>
         </div>
+    </div>
+</nav>
 
-    </nav>
-
-
-</header>
+<!-- End of NavBar -->
 
 <main class="container my-4">
     <h1 class="mb-4">Admin Dashboard</h1>
 
-    <!-- KPI Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card card-kpi shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Total Showcases</div>
-                    <div class="fs-3 fw-bold" th:text="${totalShowcases}">0</div>
-                </div>
+    <!-- KPI Cards --> <div class="row g-3 mb-4"> <div class="col-md-3"> <div class="card card-kpi shadow-sm">
+    <div class="card-body"> <div class="text-muted">Total Showcases</div> <div class="fs-3 fw-bold" th:text="${totalShowcases}">0</div>
+    </div>
+</div>
+</div>
+    <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Live</div>
+                <div class="fs-3 fw-bold" th:text="${liveShowcases}">0</div>
+            </div> </div> </div> <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Pending</div>
+                <div class="fs-3 fw-bold" th:text="${draftShowcases}">0</div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card card-kpi shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Live</div>
-                    <div class="fs-3 fw-bold" th:text="${liveShowcases}">0</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-kpi shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Pending</div>
-                    <div class="fs-3 fw-bold" th:text="${draftShowcases}">0</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-kpi shadow-sm">
-                <div class="card-body">
-                    <div class="text-muted">Total Projects</div>
-                    <div class="fs-3 fw-bold" th:text="${totalProjects}">0</div>
-                </div>
-            </div>
-        </div>
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
     </div>
 
     <!-- Showcase Management -->
@@ -122,13 +138,13 @@
                                data-creator=${showcase.createdBy != null ? showcase.createdBy.userName : 'Unknown'},
                                data-date=${showcase.createdAt != null ? #dates.format(showcase.createdAt, 'dd MMM yyyy HH:mm') : 'N/A'}"
                                     onclick="openShowcaseModal(this)">
-                                <i class="fas fa-eye"></i> View Details
+                                <i class="fas fa-eye"></i>
                             </button>
 
                             <!-- Edit -->
                             <a th:href="@{/MainGallery/admin/showcases/edit/{id}(id=${showcase.showcaseId})}"
                                class="btn btn-sm btn-outline-primary me-2">
-                                <i class="fas fa-edit"></i> Edit
+                                <i class="fas fa-edit"></i>
                             </a>
 
                             <!-- Delete -->
@@ -136,13 +152,12 @@
                                   method="post" style="display:inline-block;"
                                   onsubmit="return confirm('Are you sure you want to delete this showcase?');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash-alt"></i> Delete
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
 
-                    <!-- Empty -->
                     <tr th:if="${(searchResults != null and #lists.isEmpty(searchResults)) or (searchResults == null and #lists.isEmpty(recentShowcases))}">
                         <td colspan="6" class="text-center text-muted">
                             <span th:if="${keyword == null or keyword.isEmpty()}">No showcases yet.</span>
@@ -177,7 +192,6 @@
                         <p><strong>Status:</strong> <span id="showcaseStatus"></span></p>
                         <p><strong>Created by:</strong> <span id="showcaseCreator"></span></p>
                         <p><strong>Created on:</strong> <span id="showcaseDate"></span></p>
-
                         <hr>
                         <h6>Projects in this Showcase</h6>
                         <ul id="showcaseProjects" class="list-group small"></ul>
@@ -191,9 +205,9 @@
     </div>
 </div>
 
-<footer class="footer">
-    <h4 style="color: white;">LOGO GOES HERE</h4><br>
-    <div class="copy">© 2024 TUS GALLERY</div>
+<footer class="footer bg-dark text-center text-white py-3 mt-5">
+    <h4>FutureProof</h4>
+    <div class="copy">© 2025 TUS Gallery</div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -226,8 +240,7 @@
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <span>${p.projectName}</span>
             <div>
-              <a href="/project/projectDetails/${p.projectId}"
-                 class="btn btn-sm btn-outline-primary me-2">View</a>
+              <a href="/project/projectDetails/${p.projectId}" class="btn btn-sm btn-outline-primary me-2">View</a>
               <button class="btn btn-sm btn-outline-danger"
                       onclick="removeProject(${id}, ${p.projectId}, this)">Remove</button>
             </div>

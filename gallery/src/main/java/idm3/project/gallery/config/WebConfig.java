@@ -11,5 +11,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/profile/**")
                 .addResourceLocations("file:uploads/profile/");
+      // file path could change, depending on if this works or doesn't work on people's devices...
     }
 }

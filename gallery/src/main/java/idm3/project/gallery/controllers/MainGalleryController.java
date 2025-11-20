@@ -72,7 +72,6 @@ public class MainGalleryController {
         } else if ("senioradmin".equalsIgnoreCase(type)) {
             mv.setViewName("redirect:/MainGallery/seniorAdminDashboard");
         } else if ("employer".equalsIgnoreCase(type)) {
-            // IMPORTANT: keep this URL; EmployerController renders the view "employerDashboard"
             mv.setViewName("redirect:/MainGallery/employerDashboard");
         } else {
             mv.setViewName("redirect:/MainGallery/dashboard");

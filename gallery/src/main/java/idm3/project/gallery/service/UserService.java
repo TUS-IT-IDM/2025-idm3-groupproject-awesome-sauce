@@ -12,14 +12,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import java.util.List;
-
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
+    // Default profile picture directory (single shared folder)
+//     private static final String PROFILE_PICTURE_DIR = "src/main/resources/static/assets/images/profile/";
+//     switch to the above statement if the current file directory does not work
+    /**
+     * Authenticate user by email and password.
+     */
     // Save uploads outside the JAR
     private static final String PROFILE_PICTURE_DIR =
             System.getProperty("user.dir") + "/uploads/profile/";
@@ -36,10 +40,16 @@ public class UserService {
         return userRepository.findByEmailAddress(email);
     }
 
+    /**
+     * Compare given password with stored one.
+     */
     public boolean passwordMatches(User user, String rawPassword) {
         return user != null && user.getPassword().equals(rawPassword);
     }
 
+    /**
+     * Register a new user (ensuring no duplicates).
+     */
     public boolean registerUser(User user) {
         if (userRepository.existsByUserName(user.getUserName()) ||
                 userRepository.existsByEmailAddress(user.getEmailAddress())) {
@@ -49,6 +59,9 @@ public class UserService {
         return true;
     }
 
+    /**
+     * Search users by name, email, or organization.
+     */
     public List<User> searchUsers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return userRepository.findAll();
@@ -75,16 +88,24 @@ public class UserService {
         String filename = user.getUserId() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
 
-        // Log actual path for debugging
-        System.out.println("✅ Saving profile picture to: " + path.toAbsolutePath());
+    public void uploadProfilePicture(User user, MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            // Ensure folder exists
+            Files.createDirectories(Paths.get(PROFILE_PICTURE_DIR));
 
-        // Write file to disk
-        Files.write(path, file.getBytes());
+            // Name file uniquely using user ID
+            String filename = user.getUserId() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
 
-        // Save relative filename in DB
-        user.setProfilePicture(filename);
-        userRepository.save(user);
+            // Save file to static folder
+            Files.write(path, file.getBytes());
+
+            // Store filename (relative to profile/ directory)
+            user.setProfilePicture(filename);
+            userRepository.save(user);
+        }
     }
+
 
     public User refreshUser(Long userId) {
         return userRepository.findById(userId).orElse(null);

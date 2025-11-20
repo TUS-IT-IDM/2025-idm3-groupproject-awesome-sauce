@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class UserController {
             return "redirect:/MainGallery/Login";
         }
 
-        // Refresh from DB in case their info changed
+        // Always fetch the most up-to-date user info from the DB
         User refreshedUser = userService.refreshUser(user.getUserId());
         session.setAttribute("loggedInUser", refreshedUser);
         model.addAttribute("user", refreshedUser);
@@ -41,34 +42,35 @@ public class UserController {
     }
 
     /**
-     * Handle profile picture uploads.
+     * Handle profile picture upload + instant refresh.
      */
     @PostMapping("/uploadPicture")
     public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile file,
                                        HttpSession session,
-                                       Model model) {
+                                       RedirectAttributes ra) {
+
         User user = (User) session.getAttribute("loggedInUser");
 
         if (user == null) {
+            ra.addFlashAttribute("error", "⚠️ You must be logged in to upload a profile picture.");
             return "redirect:/MainGallery/Login";
         }
 
         try {
+            // Save the uploaded file
             userService.uploadProfilePicture(user, file);
 
-            // Refresh and update session
+            // ✅ Reload user data so new image shows immediately
             User updatedUser = userService.refreshUser(user.getUserId());
             session.setAttribute("loggedInUser", updatedUser);
-            model.addAttribute("user", updatedUser);
-            model.addAttribute("success", "Profile picture updated successfully!");
+
+            ra.addFlashAttribute("message", "✅ Profile picture updated successfully!");
         } catch (IOException e) {
             e.printStackTrace();
-            model.addAttribute("error", "Error uploading file: " + e.getMessage());
+            ra.addFlashAttribute("error", "❌ Failed to upload picture: " + e.getMessage());
         }
 
-        System.out.println("Upload endpoint triggered successfully!");
-        return "profile";
+        // ✅ Redirect ensures immediate refresh of the displayed image
+        return "redirect:/MainGallery/profile";
     }
-
-
 }
