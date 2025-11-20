@@ -19,25 +19,23 @@ public class UserService {
     private UserRepository userRepository;
 
     // Default profile picture directory (single shared folder)
-    private static final String PROFILE_PICTURE_DIR = "src/main/resources/static/assets/images/profile/";
-
+//     private static final String PROFILE_PICTURE_DIR = "src/main/resources/static/assets/images/profile/";
+//     switch to the above statement if the current file directory does not work
     /**
      * Authenticate user by email and password.
      */
+    // Save uploads outside the JAR
+    private static final String PROFILE_PICTURE_DIR =
+            System.getProperty("user.dir") + "/uploads/profile/";
+
     public User authenticate(String email, String password) {
         return userRepository.findByEmailAddressAndPassword(email, password);
     }
 
-    /**
-     * Check if an email exists in the database.
-     */
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmailAddress(email);
     }
 
-    /**
-     * Find a user by email.
-     */
     public User findByEmail(String email) {
         return userRepository.findByEmailAddress(email);
     }
@@ -55,7 +53,7 @@ public class UserService {
     public boolean registerUser(User user) {
         if (userRepository.existsByUserName(user.getUserName()) ||
                 userRepository.existsByEmailAddress(user.getEmailAddress())) {
-            return false; // User already exists
+            return false;
         }
         userRepository.save(user);
         return true;
@@ -68,12 +66,27 @@ public class UserService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return userRepository.findAll();
         }
-
-        return userRepository.findByFirstNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrEmailAddressContainingIgnoreCaseOrOrganizationContainingIgnoreCase(
-                keyword, keyword, keyword, keyword
-        );
+        return userRepository
+                .findByFirstNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrEmailAddressContainingIgnoreCaseOrOrganizationContainingIgnoreCase(
+                        keyword, keyword, keyword, keyword
+                );
     }
 
+    // ==========================================================
+    // 👤 Profile Picture Upload (fixed)
+    // ==========================================================
+    public void uploadProfilePicture(User user, MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            System.out.println("No file uploaded or file is empty.");
+            return;
+        }
+
+        // Ensure folder exists
+        Files.createDirectories(Paths.get(PROFILE_PICTURE_DIR));
+
+        // Unique filename
+        String filename = user.getUserId() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
 
     public void uploadProfilePicture(User user, MultipartFile file) throws IOException {
         if (file != null && !file.isEmpty()) {
