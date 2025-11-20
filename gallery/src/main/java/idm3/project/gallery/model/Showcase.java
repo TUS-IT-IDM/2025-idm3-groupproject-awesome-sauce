@@ -1,40 +1,44 @@
 package idm3.project.gallery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.Instant;
 import java.util.List;
-
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "projects")
 @Entity
-@Table(name="showcase")
+@Table(name = "showcase")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Showcase {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "ShowcaseId")
-  private long showcaseId;
+  private Long showcaseId;
 
-  @Column(name = "Name")
   private String name;
-
-  @Column(name = "Description")
   private String description;
-
-  @Column(name = "Image")
+  private String status;
   private String image;
 
-  @Column(name = "Status")
-  private String status;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CreatedBy", nullable = false)
+  @JsonIgnoreProperties({"password", "email", "roles", "showcases"}) // prevent recursion
+  private User createdBy;
 
-  @ManyToMany
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinTable(
-          name = "showcaseproject", // ✅ use your existing table
+          name = "showcaseproject",
           joinColumns = @JoinColumn(name = "ShowcaseId"),
-          inverseJoinColumns = @JoinColumn(name = "ProjectId")
+          inverseJoinColumns = @JoinColumn(name = "ProjectID")
   )
+  @JsonIgnoreProperties({"user", "showcase"}) // don't include user or showcase inside project JSON
   private List<Project> projects;
+
+  @Column(name = "CreatedAt", nullable = false, updatable = false)
+  private Instant createdAt = Instant.now();
 }

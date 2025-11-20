@@ -6,8 +6,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/assets/css/lcstyle.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .card-kpi { border-radius: 12px; }
         .table img.thumb { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
@@ -20,24 +18,14 @@
 
     <nav class="nav-items">
         <a th:href="@{/MainGallery/HomePage}">Home</a>
-
         <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
         <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
-
         <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
-        <!-- ✅ Logout text link -->
-        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
-            Logout
-        </a>
+        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">Logout</a>
 
-        <!-- Avatar icon: Profile if logged in; Login otherwise -->
         <div class="icon-button" th:with="isLoggedIn=${user != null}">
-            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
-                <i class="fas fa-user"></i>
-            </a>
-            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
-                <i class="fas fa-user"></i>
-            </a>
+            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}"><i class="fas fa-user"></i></a>
+            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}"><i class="fas fa-user"></i></a>
         </div>
 
     </nav>
@@ -46,10 +34,7 @@
 </header>
 
 <main class="container my-4">
-
     <h1 class="mb-4">Admin Dashboard</h1>
-
-
 
     <!-- KPI Cards -->
     <div class="row g-3 mb-4">
@@ -87,31 +72,23 @@
         </div>
     </div>
 
-    <!-- ====================== -->
-    <!-- 🔍 SHOWCASE MANAGEMENT SECTION -->
-    <!-- ====================== -->
+    <!-- Showcase Management -->
     <div class="card mt-5 shadow-sm">
         <div class="card-body">
             <h3 class="mb-3">Showcases</h3>
 
-            <!-- Search Form -->
+            <!-- Search -->
             <form th:action="@{/MainGallery/admin/showcases/searchShowcases}" method="get" class="d-flex gap-2 mb-4">
-                <input type="text" name="keyword"
-                       th:value="${keyword}"
-                       placeholder="Search by showcase name or description..."
-                       class="form-control"
+                <input type="text" name="keyword" th:value="${keyword}"
+                       placeholder="Search by showcase name or description..." class="form-control"
                        style="max-width: 400px;">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
 
-            <!-- Quick Actions -->
             <div class="mb-3 d-flex gap-2 flex-wrap">
                 <a class="btn btn-outline-primary" th:href="@{/MainGallery/admin/showcases/create}">+ Create Showcase</a>
-                <!-- Add more: Manage Projects, Users, Settings -->
-                <!-- <a class="btn btn-secondary" th:href="@{/MainGallery/admin/projects}">Manage Projects</a> -->
             </div>
 
-            <!-- Results / Recent Table -->
             <div>
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-dark">
@@ -125,20 +102,29 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 🧭 Use searchResults if available, otherwise recentShowcases -->
                     <tr th:each="showcase : ${searchResults != null ? searchResults : recentShowcases}">
                         <td th:text="${showcase.showcaseId}"></td>
                         <td>
-                            <img class="thumb"
-                                 th:src="@{'/assets/images/showcases/' + ${showcase.image}}"
-                                 th:alt="${showcase.name}">
+                            <img class="thumb" th:src="@{'/assets/images/showcases/' + ${showcase.image}}" th:alt="${showcase.name}">
                         </td>
                         <td th:text="${showcase.name}"></td>
                         <td th:text="${showcase.status}"></td>
                         <td th:text="${showcase.description}"></td>
 
-                        <!-- 🎯 Action Buttons -->
                         <td class="text-center">
+                            <!-- View Details -->
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-info me-2"
+                                    th:attr="data-id=${showcase.showcaseId},
+                               data-name=${showcase.name},
+                               data-image=${showcase.image},
+                               data-status=${showcase.status},
+                               data-creator=${showcase.createdBy != null ? showcase.createdBy.userName : 'Unknown'},
+                               data-date=${showcase.createdAt != null ? #dates.format(showcase.createdAt, 'dd MMM yyyy HH:mm') : 'N/A'}"
+                                    onclick="openShowcaseModal(this)">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+
                             <!-- Edit -->
                             <a th:href="@{/MainGallery/admin/showcases/edit/{id}(id=${showcase.showcaseId})}"
                                class="btn btn-sm btn-outline-primary me-2">
@@ -147,8 +133,7 @@
 
                             <!-- Delete -->
                             <form th:action="@{/MainGallery/admin/showcases/delete/{id}(id=${showcase.showcaseId})}"
-                                  method="post"
-                                  style="display:inline-block;"
+                                  method="post" style="display:inline-block;"
                                   onsubmit="return confirm('Are you sure you want to delete this showcase?');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="fas fa-trash-alt"></i> Delete
@@ -157,13 +142,13 @@
                         </td>
                     </tr>
 
-                    <!-- Empty message -->
-                    <tr th:if="${#lists.isEmpty(searchResults != null ? searchResults : recentShowcases)}">
+                    <!-- Empty -->
+                    <tr th:if="${(searchResults != null and #lists.isEmpty(searchResults)) or (searchResults == null and #lists.isEmpty(recentShowcases))}">
                         <td colspan="6" class="text-center text-muted">
-                            <span th:if="${keyword == null || keyword.isEmpty()}">No showcases yet.</span>
-                            <span th:if="${keyword != null && !keyword.isEmpty()}">
-              No showcases found for "<span th:text="${keyword}"></span>".
-            </span>
+                            <span th:if="${keyword == null or keyword.isEmpty()}">No showcases yet.</span>
+                            <span th:if="${keyword != null and !keyword.isEmpty()}">
+                No showcases found for "<span th:text="${keyword}"></span>".
+              </span>
                         </td>
                     </tr>
                     </tbody>
@@ -171,32 +156,112 @@
             </div>
         </div>
     </div>
-
-
 </main>
 
-<!-- Footer -->
+<!-- Showcase Details Modal -->
+<div class="modal fade" id="showcaseModal" tabindex="-1" aria-labelledby="showcaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="showcaseModalLabel">Showcase Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <img id="showcaseImage" class="img-fluid rounded shadow-sm"
+                             style="max-height: 250px; object-fit: cover;" alt="Showcase image">
+                    </div>
+                    <div class="col-md-7">
+                        <h4 id="showcaseName" class="fw-bold"></h4>
+                        <p><strong>Status:</strong> <span id="showcaseStatus"></span></p>
+                        <p><strong>Created by:</strong> <span id="showcaseCreator"></span></p>
+                        <p><strong>Created on:</strong> <span id="showcaseDate"></span></p>
+
+                        <hr>
+                        <h6>Projects in this Showcase</h6>
+                        <ul id="showcaseProjects" class="list-group small"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <footer class="footer">
     <h4 style="color: white;">LOGO GOES HERE</h4><br>
     <div class="copy">© 2024 TUS GALLERY</div>
-
-    <div class="bottom-links">
-        <div class="links">
-            <span>More Info</span>
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </div>
-
-        <div class="links">
-            <span>Social Links</span>
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-        </div>
-    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    async function openShowcaseModal(button) {
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const image = button.getAttribute('data-image');
+        const status = button.getAttribute('data-status');
+        const creator = button.getAttribute('data-creator') || 'Unknown';
+        const date = button.getAttribute('data-date') || 'N/A';
+
+        document.getElementById('showcaseName').textContent = name;
+        document.getElementById('showcaseStatus').textContent = status;
+        document.getElementById('showcaseCreator').textContent = creator;
+        document.getElementById('showcaseDate').textContent = date;
+        document.getElementById('showcaseImage').src = '/assets/images/showcases/' + image;
+
+        const projectList = document.getElementById('showcaseProjects');
+        projectList.innerHTML = '<li class="list-group-item text-muted">Loading projects...</li>';
+
+        try {
+            const response = await fetch(`/MainGallery/admin/showcases/${id}/projects`);
+            const projects = await response.json();
+
+            if (projects.length === 0) {
+                projectList.innerHTML = '<li class="list-group-item text-muted">No projects linked yet.</li>';
+            } else {
+                projectList.innerHTML = projects.map(p => `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>${p.projectName}</span>
+            <div>
+              <a href="/project/projectDetails/${p.projectId}"
+                 class="btn btn-sm btn-outline-primary me-2">View</a>
+              <button class="btn btn-sm btn-outline-danger"
+                      onclick="removeProject(${id}, ${p.projectId}, this)">Remove</button>
+            </div>
+          </li>
+        `).join('');
+            }
+        } catch (e) {
+            projectList.innerHTML = '<li class="list-group-item text-danger">Error loading projects.</li>';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('showcaseModal'));
+        modal.show();
+    }
+
+    async function removeProject(showcaseId, projectId, button) {
+        if (!confirm("Remove this project from the showcase?")) return;
+
+        try {
+            const response = await fetch(`/MainGallery/admin/showcases/${showcaseId}/removeProject/${projectId}`, {
+                method: 'POST'
+            });
+            const result = await response.text();
+
+            if (result === "success") {
+                const li = button.closest('li');
+                li.classList.add('bg-danger-subtle');
+                setTimeout(() => li.remove(), 300);
+            } else {
+                alert("Failed to remove project. Try again.");
+            }
+        } catch (e) {
+            alert("Error while removing project.");
+        }
+    }
+</script>
 </body>
 </html>

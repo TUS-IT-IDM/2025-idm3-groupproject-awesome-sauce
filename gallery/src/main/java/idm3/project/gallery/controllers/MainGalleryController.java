@@ -88,17 +88,7 @@ public class MainGalleryController {
         return "redirect:/MainGallery/Login";
     }
 
-    @GetMapping("/profile")
-    public ModelAndView viewProfile(HttpSession session) {
-        ModelAndView mav = new ModelAndView("profile");
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null) {
-            mav.addObject("user", loggedInUser);
-        } else {
-            mav.setViewName("redirect:/MainGallery/Login");
-        }
-        return mav;
-    }
+
 
     // Registration
     @GetMapping("/Register")

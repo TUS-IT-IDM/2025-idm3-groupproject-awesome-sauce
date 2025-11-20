@@ -1,5 +1,7 @@
 package idm3.project.gallery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.model.User;
 import jakarta.persistence.*;
@@ -8,9 +10,11 @@ import lombok.Setter;
 
 import java.util.List;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @Entity
+
 @Table(name="project")
 public class Project {
     @Id

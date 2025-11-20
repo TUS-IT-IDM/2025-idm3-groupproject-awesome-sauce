@@ -18,6 +18,7 @@ public interface ShowcaseRepository extends CrudRepository<Showcase, Long> {
 
     List<Showcase> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
 
+
 }
 
 
