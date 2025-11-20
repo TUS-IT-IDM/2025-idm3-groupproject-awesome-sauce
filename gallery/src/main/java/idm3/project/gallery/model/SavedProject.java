@@ -1,11 +1,14 @@
 // src/main/java/idm3/project/gallery/model/SavedProject.java
 package idm3.project.gallery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
-@Getter @Setter
+
+@Getter
+@Setter
 @AllArgsConstructor @NoArgsConstructor
 @Entity
 @Table(

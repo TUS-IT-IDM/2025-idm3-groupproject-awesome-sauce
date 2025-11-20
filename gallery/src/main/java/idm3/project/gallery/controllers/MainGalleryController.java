@@ -72,7 +72,6 @@ public class MainGalleryController {
         } else if ("senioradmin".equalsIgnoreCase(type)) {
             mv.setViewName("redirect:/MainGallery/seniorAdminDashboard");
         } else if ("employer".equalsIgnoreCase(type)) {
-            // IMPORTANT: keep this URL; EmployerController renders the view "employerDashboard"
             mv.setViewName("redirect:/MainGallery/employerDashboard");
         } else {
             mv.setViewName("redirect:/MainGallery/dashboard");
@@ -88,17 +87,7 @@ public class MainGalleryController {
         return "redirect:/MainGallery/Login";
     }
 
-    @GetMapping("/profile")
-    public ModelAndView viewProfile(HttpSession session) {
-        ModelAndView mav = new ModelAndView("profile");
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null) {
-            mav.addObject("user", loggedInUser);
-        } else {
-            mav.setViewName("redirect:/MainGallery/Login");
-        }
-        return mav;
-    }
+
 
     // Registration
     @GetMapping("/Register")

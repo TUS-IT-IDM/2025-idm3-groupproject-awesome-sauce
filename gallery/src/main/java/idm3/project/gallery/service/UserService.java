@@ -4,7 +4,12 @@ import idm3.project.gallery.model.User;
 import idm3.project.gallery.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -13,9 +18,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    // Default profile picture directory (single shared folder)
+    private static final String PROFILE_PICTURE_DIR = "src/main/resources/static/assets/images/profile/";
+
     /**
      * Authenticate user by email and password.
-     * Returns the User if both match, otherwise null.
      */
     public User authenticate(String email, String password) {
         return userRepository.findByEmailAddressAndPassword(email, password);
@@ -36,15 +43,14 @@ public class UserService {
     }
 
     /**
-     * Compare given password with the stored one.
-     * (If you add password hashing later, update this to use BCrypt matches.)
+     * Compare given password with stored one.
      */
     public boolean passwordMatches(User user, String rawPassword) {
         return user != null && user.getPassword().equals(rawPassword);
     }
 
     /**
-     * Register a new user (checks both username and email for duplicates).
+     * Register a new user (ensuring no duplicates).
      */
     public boolean registerUser(User user) {
         if (userRepository.existsByUserName(user.getUserName()) ||
@@ -55,7 +61,9 @@ public class UserService {
         return true;
     }
 
-    // Search users by name, email, or organization
+    /**
+     * Search users by name, email, or organization.
+     */
     public List<User> searchUsers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return userRepository.findAll();
@@ -67,4 +75,26 @@ public class UserService {
     }
 
 
+    public void uploadProfilePicture(User user, MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            // Ensure folder exists
+            Files.createDirectories(Paths.get(PROFILE_PICTURE_DIR));
+
+            // Name file uniquely using user ID
+            String filename = user.getUserId() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
+
+            // Save file to static folder
+            Files.write(path, file.getBytes());
+
+            // Store filename (relative to profile/ directory)
+            user.setProfilePicture(filename);
+            userRepository.save(user);
+        }
+    }
+
+
+    public User refreshUser(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }

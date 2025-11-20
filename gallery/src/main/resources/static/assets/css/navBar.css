@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+.navbar-brand span {
+    font-size: 1.2rem; !important;
+    letter-spacing: 0.5px; !important;
+}
+.nav-link {
+    font-family: "Afacad", sans-serif !important;
+    color: #4c6873 !important;
+    font-weight: 300; !important;
+    margin: 0 6px; !important;
+    transition: color 0.2s ease; !important;
+}
+.nav-link:hover, .nav-link.active {
+    color: #005b73 !important;
+}
+
+span a{
+    font-family: "Afacad", sans-serif !important;
+    color: #4c6873 !important;
+    font-weight: 500; !important;
+    margin: 0 6px; !important;
+    transition: color 0.2s ease; !important;
+    text-decoration: none !important;
+}
