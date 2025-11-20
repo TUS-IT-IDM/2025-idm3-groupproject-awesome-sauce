@@ -1,6 +1,5 @@
 package idm3.project.gallery.service;
 
-import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.repository.ShowcaseRepository;
 import jakarta.transaction.Transactional;
