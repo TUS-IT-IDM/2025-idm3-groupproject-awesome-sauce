@@ -216,3 +216,11 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE showcase_projects (
+                                   showcase_id BIGINT NOT NULL,
+                                   project_id BIGINT NOT NULL,
+                                   PRIMARY KEY (showcase_id, project_id),
+                                   FOREIGN KEY (showcase_id) REFERENCES showcase(ShowcaseId),
+                                   FOREIGN KEY (project_id) REFERENCES project(ProjectID)
+);

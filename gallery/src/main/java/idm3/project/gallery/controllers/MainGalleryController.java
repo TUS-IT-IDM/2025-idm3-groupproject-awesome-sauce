@@ -172,7 +172,7 @@ public class MainGalleryController {
         System.out.println("ModelAndViewsetUpIndexPageData");
         ModelAndView mav = new ModelAndView("homepage");
         // find all projects
-        List<Project> allProjects = projectService.findAllOrderedByCreationDate();
+        List<Project> allProjects = projectService.findAllProjects();
 
         generateThumbnailProject(allProjects);
         List<Showcase> allShowcases = generateThumbnailShowcases();
@@ -214,8 +214,8 @@ public class MainGalleryController {
 
         for(Project project : allProjects) {
 
-            System.out.println(imageDirPathProject + project.getProjectHeroImage());
-            File image = new File(imageDirPathProject + "/" +project.getProjectHeroImage());
+            System.out.println(imageDirPathProject + project.getProjectImage());
+            File image = new File(imageDirPathProject + "/" +project.getProjectImage());
             System.out.println("thumbnail:" + thumbnailDirPathProject + "thumb_" + image.getName());
             File thumbnailFile = new File(thumbnailDirPathProject + "/" + "thumb_" + image.getName());
             thumbnailService.generateThumbnail(image, thumbnailFile);
