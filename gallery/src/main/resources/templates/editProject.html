@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Edit Project</h1>
+
+    <form method="post" th:action="@{/project/saveProject}" th:object="${aProject}" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{projectId}" />
+
+        <div class="form-group">
+            <label for="ProjectName">Project Name</label>
+            <input type="text" id="ProjectName" th:field="*{ProjectName}" placeholder="Enter project name" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="ProjectDescription">Project Description</label>
+            <textarea id="ProjectDescription" th:field="*{ProjectDescription}" rows="4" placeholder="Enter description" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="Category">Category</label>
+            <input type="text" id="Category" th:field="*{Category}" placeholder="Enter category (e.g. Web, Design, AI)" />
+        </div>
+
+        <div class="form-group">
+            <label for="ProjectDescriptionSummary">Short Summary</label>
+            <input type="text" id="ProjectDescriptionSummary" th:field="*{ProjectDescriptionSummary}" placeholder="Brief summary of the project" maxlength="255" />
+        </div>
+
+        <div class="form-group">
+            <label for="additionalDoc">Additional Document</label>
+            <input type="text" id="additionalDoc" th:field="*{additionalDoc}" placeholder="Enter file name or document link (optional)" />
+        </div>
+
+<!--        doesnt work yet-->
+<!--        <div class="form-group">-->
+<!--            <label for="imageFile">Project Image</label>-->
+<!--            <input type="file" id="imageFile" name="imageFile" accept="image/*" />-->
+<!--            <div>-->
+<!--                <p>Current image:</p>-->
+<!--                <img th:if="${aProject.getProjectImage() != null}" th:src="@{'/uploads/' + ${aProject.getProjectImage()}}" width="150" height="100" alt="Current image"/>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="form-group">
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

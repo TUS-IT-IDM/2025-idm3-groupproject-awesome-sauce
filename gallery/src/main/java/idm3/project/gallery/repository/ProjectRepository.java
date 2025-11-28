@@ -8,7 +8,9 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Long> {
-    // Find all projects ordered by creation date descending
-    List<Project> findAllByOrderByCreationDateDesc();
+    List<Project> findByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(
+            String name, String description);
 }
+
+
 

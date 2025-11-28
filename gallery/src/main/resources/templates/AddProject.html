@@ -1,0 +1,47 @@
+<form method="post" th:action="@{/project/addProject}" enctype="multipart/form-data">
+<!--    <div th:if="${errors}" style="color: red;">-->
+<!--        <ul>-->
+<!--            <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+    <div class="form-group">
+        <label for="ProjectName">Project Name</label>
+        <input type="text" id="ProjectName" name="ProjectName" placeholder="Enter Project name" required/>
+
+<!--        <span th:if="${#fields.hasErrors('productName')}" th:errors="*{ProjectName}" style="color: red;"></span>-->
+        
+    </div>
+
+    <div class="form-group">
+        <label for="ProjectDescription">Project Description</label>
+        <textarea id="ProjectDescription" name="ProjectDescription" rows="4" placeholder="Enter description" required></textarea>
+    </div>
+<!--    <span th:if="${#fields.hasErrors('productDescription')}" th:errors="*{ProjecDescription}" style="color: red;"></span>-->
+
+    <div class="form-group">
+        <label for="Category">Category</label>
+        <input type="text" id="Category" name="Category" placeholder="Enter category (e.g. Web, Design, AI)" />
+    </div>
+
+    <div class="form-group">
+        <label for="ProjectDescriptionSummary">Short Summary</label>
+        <input type="text" id="ProjectDescriptionSummary" name="ProjectDescriptionSummary" placeholder="Brief summary of the project" maxlength="255" />
+    </div>
+
+    <div class="form-group">
+        <label for="additionalDoc">Additional Document</label>
+        <input type="text" id="additionalDoc" name="additionalDoc" placeholder="Enter file name or document link (optional)" />
+    </div>
+
+
+
+    <div class="form-group">
+        <label for="imageFile">Project Image</label>
+        <input type="file" id="imageFile" name="imageFile" accept="image/*" required/>
+    </div>
+
+    <div class="form-group">
+        <button type="submit">Add Project</button>
+    </div>
+</form>
