@@ -1,5 +1,9 @@
 package idm3.project.gallery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import idm3.project.gallery.model.Showcase;
+import idm3.project.gallery.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
