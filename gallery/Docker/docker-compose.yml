@@ -1,50 +1,99 @@
-# Define services
-services:
-  # Database Service (Mysql)
-  db:
-    container_name: db
+version: '3.8'
 
-   # image: mysql:8.0
-    image: mariadb
+services:
+  mysql:
+    #  build:
+    #    context: .
+    #    dockerfile: ./Docker/db/Dockerfile
+    image: mysql:8.0
+    container_name: gallery-mysql
+    hostname: db
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_DATABASE: idm3project2024
-      MYSQL_USER: idm3project2024
-      MYSQL_PASSWORD: ""
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-idm3project}
+      MYSQL_USER: ${DB_USERNAME:-gallery}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
     ports:
-      - 3316:3306
+      - "${DB_PORT:-3306}:3306"
     volumes:
-      - "./db:/docker-entrypoint-initdb.d"
+      - mysql-data:/var/lib/mysql
+      - "./Docker/db:/docker-entrypoint-initdb.d"
+    networks:
+      - gallery-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Docker/app/Dockerfile
+    container_name: gallery-app
+    hostname: app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: gallery-mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-idm3project}
+      DB_USERNAME: ${DB_USERNAME:-gallery}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-docker-secret-key-change-this-minimum-256-bits-required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+    ports:
+      - "${SERVER_PORT:-8081}:8080"
+    networks:
+      - gallery-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   # Database Management Service (phpMyAdmin)
   phpmyadmin:
+    container_name: gallery-phpmyadmin
+    hostname: phpmyadmin
+    networks:
+      - gallery-network
     depends_on:
-      - db
+      mysql:
+        condition: service_healthy
     image: phpmyadmin/phpmyadmin
     ports:
       - '8888:80'
     environment:
-      PMA_HOST: db
+      PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: "root"
 
-
-
-
-  web:
-    build: ./web/
+  nginx-proxy:
+    build:
+      context: .
+      dockerfile: ./Docker/proxy/Dockerfile
+    container_name: gallery-proxy
+    hostname: proxy
 
     ports:
-      - "4848:4848"
-      - "8881:8080"
-      - "8181:8181"
-      - "5005:5005"
+      - "80:80"
+    volumes:
+      - "/var/log/nginx:/var/log/nginx"
     depends_on:
-      - db
-      - phpmyadmin
+      - app
+    networks:
+      - gallery-network
 
-    links:
-      - db
-      - phpmyadmin
+networks:
+  gallery-network:
+    driver: bridge
 
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+volumes:
+  mysql-data:
+    driver: local
