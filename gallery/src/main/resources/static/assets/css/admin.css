@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+
+body {
+    padding-top: 70px;
+    font-family: "Afacad", sans-serif;/* for fixed navbar */
+    background-color: #449FA3;
+}
+.card-kpi {
+    border-radius: 12px;
+}
+.table img.thumb {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.selected-row {
+    background-color: rgba(13, 110, 253, 0.15) !important; /* subtle blue */
+    transition: background-color 0.2s ease;
+}
+
+.selected-row td {
+    border-top: 1px solid rgba(13, 110, 253, 0.3);
+    border-bottom: 1px solid rgba(13, 110, 253, 0.3);
+}
+
+
+

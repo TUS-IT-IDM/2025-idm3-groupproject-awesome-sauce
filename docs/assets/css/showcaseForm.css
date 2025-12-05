@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+/* Page background */
+body {
+    background-color: #3A9CA2;
+    font-family: 'Afacad', sans-serif;
+}
+
+/* Center container */
+.form-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card */
+.form-card {
+    background: #ffffff;
+    padding: 40px 45px;
+    border-radius: 8px;
+    width: 520px; /* slightly wider for textarea */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    text-align: left;
+}
+
+/* Title */
+.form-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #004858;
+    margin-bottom: 25px;
+}
+
+/* Labels */
+label {
+    font-family: "Afacad", sans-serif;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    display: block;
+    color: #003f4f;
+    font-size: 16px;
+}
+
+/* Input group w/ icon */
+.input-group {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7c8a92;
+    font-size: 16px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px 10px 38px; /* leave space for icon */
+    border: 1px solid #d4d8da;
+    border-radius: 8px;
+    font-size: 16px;
+    height: 45px;
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d4d8da;
+    border-radius: 8px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+/* File input */
+.file-input {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+/* Image Preview */
+.image-preview {
+    display: none;
+    margin-top: 10px;
+    width: 200px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Select dropdown */
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d4d8da;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+}
+
+/* Submit button */
+.form-btn {
+    width: 100%;
+    background-color: #084C55;
+    color: white;
+    font-size: 18px;
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.form-btn:hover {
+    background-color: #0a5e68;
+}
+
+/* Cancel link */
+.form-cancel {
+    display: block;
+    text-align: center;
+    color: #003f5c;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+

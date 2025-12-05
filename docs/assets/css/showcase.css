@@ -1,0 +1,133 @@
+/* Global */
+.showcase-body {
+    background-color: #f5f7f7;
+    font-family: "Afacad", sans-serif;
+}
+
+/* Header */
+.showcase-header {
+    margin-top: 60px;
+    background-color: #3A9CA2;
+    color: white;
+    padding: 70px 0;
+    text-align: center;
+}
+
+.showcase-title {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.showcase-desc {
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Section */
+.showcase-section {
+    padding: 60px 0;
+}
+
+.showcase-subtitle {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    color: #004858;
+    margin-bottom: 35px;
+}
+
+/* Empty State */
+.showcase-empty {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    color: #004858;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* STRICT 4-COLUMN GRID */
+.showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    justify-items: center;
+}
+
+/* CARD SIZE */
+.showcase-card {
+    width: 100%;
+    max-width: 300px;           /* prevents stretching */
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Image */
+.showcase-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+
+.showcase-card-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.showcase-card-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #004858;
+    margin-bottom: 10px;
+}
+
+.showcase-card-text {
+    color: #4f5b66;
+    font-size: 15px;
+}
+
+/* Footer */
+.showcase-card-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: white;
+}
+
+/* Buttons */
+.btn-view {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #084C55;
+    border: 2px solid #084C55;
+    text-decoration: none;
+    background: white;
+}
+
+.btn-view:hover {
+    background-color: #084C55;
+    color: white;
+}
+
+.btn-remove {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #c62828;
+    border: 2px solid #c62828;
+    background: white;
+}
+
+.btn-remove:hover {
+    background-color: #c62828;
+    color: white;
+}

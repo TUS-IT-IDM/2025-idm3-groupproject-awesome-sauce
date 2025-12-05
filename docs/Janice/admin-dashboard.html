@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Your styles -->
+  <link rel="stylesheet" href="../assets/css/navBar.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/footer.css">
+
+  <link rel="icon" type="image/x-icon"
+        href="../assets/images/website/Future_Proof_Logo_Icon.png">
+</head>
+
+<body>
+
+  <!-- Navbar (Admin link active) -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="../assets/images/website/Future_Proof_Logo.png"
+             alt="Logo" height="40" class="me-2">
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarContent"
+              aria-controls="navbarContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+        <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../Kamil/student-dashboard.html">Student Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../Mateusz/employer-dashboard.html">Employer Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link active" href="../Janice/admin-dashboard.html">Admin Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-primary" href="register.html">Register</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-primary" href="login.html">Login</a>
+          </li>
+        </ul>
+
+        <a href="profile.html">
+          <img src="../assets/images/website/Profile.png"
+               alt="Profile Icon" height="40" class="me-2">
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <h1 class="mb-4 text-white">Admin Dashboard</h1>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+          <div class="card-body">
+            <div class="text-muted">Total Showcases</div>
+            <div class="fs-3 fw-bold">12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+          <div class="card-body">
+            <div class="text-muted">Live</div>
+            <div class="fs-3 fw-bold text-success">8</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+          <div class="card-body">
+            <div class="text-muted">Draft</div>
+            <div class="fs-3 fw-bold text-warning">3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+          <div class="card-body">
+            <div class="text-muted">Archived</div>
+            <div class="fs-3 fw-bold text-secondary">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Showcases table -->
+    <div class="card mt-4 shadow-sm">
+      <div class="card-body">
+        <h3 class="mb-3">Showcases</h3>
+
+        <!-- Static search bar (visual only) -->
+        <form class="row g-2 mb-3" action="#" method="get">
+          <div class="col-sm-6">
+            <input type="text" name="q"
+                   class="form-control"
+                   placeholder="Search showcases...">
+          </div>
+          <div class="col-sm-3">
+            <select class="form-select">
+              <option selected>All statuses</option>
+              <option>Live</option>
+              <option>Draft</option>
+              <option>Archived</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <button class="btn btn-dark w-100" type="submit">Filter</button>
+          </div>
+        </form>
+
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Thumbnail</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th class="text-center">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>1</td>
+            <td>
+              <img src="../assets/images/showcases/thumbnail/thumb_artshowcase.jpg"
+                   class="thumb" alt="Art Showcase">
+            </td>
+            <td>Art & Design Showcase</td>
+            <td><span class="badge bg-success">Live</span></td>
+            <td>A curated selection of visual design and illustration projects.</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-light" type="button">View</button>
+              <button class="btn btn-sm btn-outline-light" type="button">Edit</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td>
+              <img src="../assets/images/showcases/thumbnail/thumb_chemshowcase.jpg"
+                   class="thumb" alt="Science Showcase">
+            </td>
+            <td>Science & Technology</td>
+            <td><span class="badge bg-warning text-dark">Draft</span></td>
+            <td>Work-in-progress projects in chemistry, physics and tech.</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-light" type="button">View</button>
+              <button class="btn btn-sm btn-outline-light" type="button">Edit</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>3</td>
+            <td>
+              <img src="../assets/images/showcases/thumbnail/thumb_disney.jpg"
+                   class="thumb" alt="Media Showcase">
+            </td>
+            <td>Media & Animation</td>
+            <td><span class="badge bg-secondary">Archived</span></td>
+            <td>Legacy projects from previous academic years.</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-light" type="button">View</button>
+              <button class="btn btn-sm btn-outline-light" type="button">Edit</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer (optional, reuse from home) -->
+  <footer class="fp-footer">
+    <div class="fp-footer-container">
+      <div class="fp-footer-left">
+        <img src="../assets/images/website/Future_Proof_Logo.png"
+             class="fp-logo" alt="FutureProof Logo">
+        <p class="fp-tagline">
+          Admin tools for managing showcases and keeping FutureProof running smoothly.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -20,6 +20,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 public class GalleryApplication implements CommandLineRunner {
 	@Autowired
+
+	//no beans issue fixes itself on start up :)
+
 	private UserRepository userRepository;
 	@Autowired
 	private ProjectRepository projectRepository;

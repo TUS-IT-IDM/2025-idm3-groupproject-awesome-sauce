@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+
+/* ---------------------------------------------------------
+   GLOBAL PAGE BACKGROUND
+--------------------------------------------------------- */
+body {
+    background-color: #3A9A9F; /* teal background from screenshot */
+    padding-top: 70px;
+    font-family: Afacad, sans-serif;
+    margin: 0;
+}
+
+/* ============================
+   TOP HEADER CONTAINER
+============================ */
+.top-header-container {
+    background: #ffffff;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0,0,0,0.05);
+    margin: 0 30px 0 30px;
+}
+
+/* Welcome text */
+.top-header-title {
+    font-family: arial, sans-serif;
+    font-size: 26px;
+    font-weight: bold;
+    color: #0F3C4C;
+    margin: 0;
+}
+
+/* Wrapper */
+.search-wrapper {
+    width: 100%;
+    max-width: 700px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 12px;
+    gap: 12px;
+
+}
+
+/* Filter button */
+.search-filter-btn {
+    background: none;
+    border: none;
+    padding: 0 2px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #0a4f5f;
+}
+
+.search-filter-btn:hover {
+    color: #06333c;
+}
+
+/* Search input */
+.search-input {
+    flex-grow: 1;
+    border: 1px solid #d1d9dd;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 15px;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #0a4f5f;
+    box-shadow: 0 0 0 2px rgba(10,79,95,0.15);
+}
+
+/* Search button */
+.search-btn {
+    background: #0a4f5f;
+    border: none;
+    padding: 7px 11px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+}
+
+.search-btn:hover {
+    background: #06333c;
+}
+
+/* Clear link */
+.clear-search-link {
+    display: block;
+    margin-top: 8px;
+    text-align: right;
+    font-size: 14px;
+    color: #6e6e6e;
+    text-decoration: none;
+}
+
+.clear-search-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------------------------------------------------------
+   CARD WRAPPER
+--------------------------------------------------------- */
+.card {
+    border: none !important;
+    overflow: hidden;
+    background-color: white !important;
+    margin-top: 20px;
+}
+.card-layout {
+    margin: 0 30px 30px 30px;
+
+}
+
+/* Card body styles */
+.card-body {
+    padding: 18px;
+
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2a2a2a;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #555;
+
+}
+
+/* ---------------------------------------------------------
+   CARD BUTTONS
+--------------------------------------------------------- */
+
+/* --- CARD BUTTON STYLING --- */
+
+/* Full-width teal "View Details" button */
+.card .btn-view-details {
+    background-color: #0A4F5F;
+    color: white;
+    width: 100%;
+    padding: 5px 0;
+    font-size: 17px;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.card .btn-view-details:hover {
+    background-color: #06333C;
+    color: white;
+}
+
+/* Focus ring exactly like screenshot */
+.card .btn-view-details:focus {
+    outline: none;
+
+}
+
+/* Delete button (red square) */
+.card .btn-delete {
+    background-color: #d83434;
+    color: white;
+    border: none;
+    padding: 5px 13px;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.card .btn-delete:hover {
+    background-color: #b22a2a;
+}
+
+/* Row holding both buttons */
+.card-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px;      /* smaller square */
+    object-fit: cover;
+    border-radius: 0;
+}
+
+
+
+/* ---------------------------------------------------------
+   MODAL
+--------------------------------------------------------- */
+.modal-content {
+    border-radius: 12px;
+}
+
+.modal-header {
+    background-color: #00667d !important;
+}
+
+
+/* ---------------------------------------------------------
+   EMPTY STATE MESSAGE
+--------------------------------------------------------- */
+.text-center.text-muted h5 {
+    color: #f9ffff !important;
+}
+
+.text-center.text-muted p {
+    color: #e4ffff !important;
+}
+
+/* PAGINATION */
+
+/* Outer container just spaces it */
+.segmented-pagination {
+    font-family: Arial,sans-serif;
+    font-weight:bold;
+    display: inline-flex;
+    overflow: hidden;
+    box-shadow: 0 10px 18px -5px rgba(0, 0, 0, 0.25);
+
+}
+
+/* Every item gets a full box */
+.segmented-pagination .page-item .page-link {
+    border: 1px solid #c8d3dd;
+    margin: 0;                 /* removes Bootstrap gap */
+    border-radius: 0;          /* we control rounding manually */
+    color: #004b57;
+    font-weight: 500;
+    background: #ffffff;
+    padding: 10px 18px;
+    min-width: 45px;
+    text-align: center;
+}
+
+/* Left rounded corner */
+.segmented-pagination .page-item:first-child .page-link {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+/* Right rounded corner */
+.segmented-pagination .page-item:last-child .page-link {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Hover */
+.segmented-pagination .page-item .page-link:hover {
+    background: #f3f8fa;
+    color: #003b45;
+}
+
+/* Active */
+.segmented-pagination .page-item.active .page-link {
+    background: #004b57;
+    color: white;
+    border-color: #004b57;
+    position: relative;
+}
+
+/* Disabled */
+.segmented-pagination .page-item.disabled .page-link {
+    background: #f7f9fa;
+    color: #9aa9b1;
+    cursor: not-allowed;
+}
+

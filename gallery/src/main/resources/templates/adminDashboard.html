@@ -1,41 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/navBar.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/footer.css">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/images/website/Future_Proof_Logo_Icon.png">
 </head>
 
-<header class="header" th:with="user=${session.loggedInUser}">
-    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
-
-    <nav class="nav-items">
-        <a th:href="@{/MainGallery/HomePage}">Home</a>
-
-        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
-        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
-
-        <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
-        <!-- ✅ Logout text link -->
-        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
-            Logout
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" th:with="user=${session.loggedInUser}">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+            <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
         </a>
 
-        <!-- Avatar icon: Profile if logged in; Login otherwise -->
-        <div class="icon-button" th:with="isLoggedIn=${user != null}">
-            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
-                <i class="fas fa-user"></i>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
+
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+                </li>
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+                </li>
+
+            </ul>
+
+            <!-- Profile Icon -->
+            <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
             </a>
-            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
-                <i class="fas fa-user"></i>
+            <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
             </a>
         </div>
-    </nav>
-</header>
+    </div>
+</nav>
+
+<!-- End of NavBar -->
+
+<main class="container my-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <!-- KPI Cards --> <div class="row g-3 mb-4"> <div class="col-md-3"> <div class="card card-kpi shadow-sm">
+    <div class="card-body"> <div class="text-muted">Total Showcases</div> <div class="fs-3 fw-bold" th:text="${totalShowcases}">0</div>
+    </div>
+</div>
+</div>
+    <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Live</div>
+                <div class="fs-3 fw-bold" th:text="${liveShowcases}">0</div>
+            </div> </div> </div> <div class="col-md-3">
+        <div class="card card-kpi shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Pending</div>
+                <div class="fs-3 fw-bold" th:text="${draftShowcases}">0</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
+    </div>
+
+    <!-- Showcase Management -->
+    <div class="card mt-5 shadow-sm">
+        <div class="card-body">
+            <h3 class="mb-3">Showcases</h3>
+
+            <!-- Search -->
+            <form th:action="@{/MainGallery/admin/showcases/searchShowcases}" method="get" class="d-flex gap-2 mb-4">
+                <input type="text" name="keyword" th:value="${keyword}"
+                       placeholder="Search by showcase name or description..." class="form-control"
+                       style="max-width: 400px;">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a class="btn btn-outline-primary" th:href="@{/MainGallery/admin/showcases/create}">+ Create Showcase</a>
+            </div>
+
+            <div>
+                <form id="bulkDeleteForm"
+                      method="post"
+                      th:action="@{/MainGallery/admin/showcases/bulk-delete}">
+
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <!-- Select All Checkbox (Step 2 we will wire it) -->
+                                <input type="checkbox" id="selectAllShowcases">
+                            </th>
+                            <th>ID</th>
+                            <th>Thumbnail</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="showcase : ${searchResults != null ? searchResults : recentShowcases}">
+                            <!-- Individual checkbox -->
+                            <td>
+                                <input type="checkbox"
+                                       class="select-showcase"
+                                       name="selectedIds"
+                                       th:value="${showcase.showcaseId}">
+                            </td>
+
+                            <td th:text="${showcase.showcaseId}"></td>
+
+                            <td>
+                                <img class="thumb"
+                                     th:src="@{'/assets/images/showcases/' + ${showcase.image}}"
+                                     th:alt="${showcase.name}">
+                            </td>
+
+                            <td th:text="${showcase.name}"></td>
+                            <td th:text="${showcase.status}"></td>
+                            <td th:text="${showcase.description}"></td>
+
+                            <td class="text-center">
+                                <!-- View -->
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-info me-2"
+                                        th:attr="data-id=${showcase.showcaseId},
+                                         data-name=${showcase.name},
+                                         data-image=${showcase.image},
+                                         data-status=${showcase.status},
+                                         data-creator=${showcase.createdBy != null ? showcase.createdBy.userName : 'Unknown'},
+                                         data-date=${showcase.createdAt != null ? #dates.format(showcase.createdAt, 'dd MMM yyyy HH:mm') : 'N/A'}"
+                                        onclick="openShowcaseModal(this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+
+                                <!-- Edit -->
+                                <a th:href="@{/MainGallery/admin/showcases/edit/{id}(id=${showcase.showcaseId})}"
+                                   class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <!-- Single delete (still works) -->
+                                <form th:action="@{/MainGallery/admin/showcases/delete/{id}(id=${showcase.showcaseId})}"
+                                      method="post"
+                                      style="display:inline-block;"
+                                      onsubmit="return confirm('Are you sure you want to delete this showcase?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <!-- No Results -->
+                        <tr th:if="${(searchResults != null and #lists.isEmpty(searchResults))
+                     or (searchResults == null and #lists.isEmpty(recentShowcases))}">
+                            <td colspan="7" class="text-center text-muted">
+                                <span th:if="${keyword == null or keyword.isEmpty()}">No showcases yet.</span>
+                                <span th:if="${keyword != null and !keyword.isEmpty()}">
+                    No showcases found for "<span th:text="${keyword}"></span>".
+                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Bulk delete button -->
+                    <button type="submit"
+                            class="btn btn-danger"
+                            id="deleteSelectedBtn"
+                            disabled>
+                        Delete Selected
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Showcase Details Modal -->
+<div class="modal fade" id="showcaseModal" tabindex="-1" aria-labelledby="showcaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="showcaseModalLabel">Showcase Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <img id="showcaseImage" class="img-fluid rounded shadow-sm"
+                             style="max-height: 250px; object-fit: cover;" alt="Showcase image">
+                    </div>
+                    <div class="col-md-7">
+                        <h4 id="showcaseName" class="fw-bold"></h4>
+                        <p><strong>Status:</strong> <span id="showcaseStatus"></span></p>
+                        <p><strong>Created by:</strong> <span id="showcaseCreator"></span></p>
+                        <p><strong>Created on:</strong> <span id="showcaseDate"></span></p>
+                        <hr>
+                        <h6>Projects in this Showcase</h6>
+                        <ul id="showcaseProjects" class="list-group small"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+
+<footer class="fp-footer">
+    <div class="fp-footer-container">
+
+        <!-- LEFT -->
+        <div class="fp-footer-left">
+            <img src="/assets/images/website/Future_Proof_Logo.png" class="fp-logo" alt="FutureProof Logo">
+
+            <p class="fp-tagline">
+                Empowering students to showcase their<br>
+                skills and connect with employers<br>
+                – from portfolio to profession.
+            </p>
+
+            <div class="fp-socials">
+                <a href="#"><img src="/assets/images/website/twitter.png" alt="X"></a>
+                <a href="#"><img src="/assets/images/website/linkedin.png" alt="LinkedIn"></a>
+                <a href="#"><img src="/assets/images/website/facebook.png" alt="Facebook"></a>
+                <a href="#"><img src="/assets/images/website/instagram.png" alt="Instagram"></a>
+            </div>
+        </div>
+
+        <!-- RIGHT GROUP (middle + right) -->
+        <div class="fp-footer-right-group">
+
+            <!-- Middle Column -->
+            <div class="fp-footer-column">
+                <h4>Technological University of<br>The Shannon</h4>
+                <p>
+                    Athlone Campus<br>
+                    University Road, Athlone<br>
+                    Co. Westmeath<br>
+                    N37 HD68
+                </p>
+                <p>
+                    Phone: <a href="tel:+3539096468000">+353 90 6468000</a><br>
+                    Email: <a href="mailto:reception.midlands@tus.ie">reception.midlands@tus.ie</a>
+                </p>
+            </div>
+
+            <!-- Right Column -->
+            <div class="fp-footer-column">
+                <h4>Technological University of<br>The Shannon</h4>
+                <p>
+                    Moylish Campus<br>
+                    Moylish Park<br>
+                    Limerick<br>
+                    V94 EC5T
+                </p>
+                <p>
+                    Phone: <a href="tel:+35361293000">+353 61 293000</a><br>
+                    Email: <a href="mailto:reception.midwest@tus.ie">reception.midwest@tus.ie</a>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <img src="/assets/images/website/Future_Proof_Icon_Logo_Low_Opacity.png" class="fp-footer-watermark" alt="">
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    async function openShowcaseModal(button) {
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const image = button.getAttribute('data-image');
+        const status = button.getAttribute('data-status');
+        const creator = button.getAttribute('data-creator') || 'Unknown';
+        const date = button.getAttribute('data-date') || 'N/A';
+
+        document.getElementById('showcaseName').textContent = name;
+        document.getElementById('showcaseStatus').textContent = status;
+        document.getElementById('showcaseCreator').textContent = creator;
+        document.getElementById('showcaseDate').textContent = date;
+        document.getElementById('showcaseImage').src = '/assets/images/showcases/' + image;
+
+        const projectList = document.getElementById('showcaseProjects');
+        projectList.innerHTML = '<li class="list-group-item text-muted">Loading projects...</li>';
+
+        try {
+            const response = await fetch(`/MainGallery/admin/showcases/${id}/projects`);
+            const projects = await response.json();
+
+            if (projects.length === 0) {
+                projectList.innerHTML = '<li class="list-group-item text-muted">No projects linked yet.</li>';
+            } else {
+                projectList.innerHTML = projects.map(p => `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>${p.projectName}</span>
+            <div>
+              <a href="/project/projectDetails/${p.projectId}" class="btn btn-sm btn-outline-primary me-2">View</a>
+              <button class="btn btn-sm btn-outline-danger"
+                      onclick="removeProject(${id}, ${p.projectId}, this)">Remove</button>
+            </div>
+          </li>
+        `).join('');
+            }
+        } catch (e) {
+            projectList.innerHTML = '<li class="list-group-item text-danger">Error loading projects.</li>';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('showcaseModal'));
+        modal.show();
+    }
+
+    async function removeProject(showcaseId, projectId, button) {
+        if (!confirm("Remove this project from the showcase?")) return;
+
+        try {
+            const response = await fetch(`/MainGallery/admin/showcases/${showcaseId}/removeProject/${projectId}`, {
+                method: 'POST'
+            });
+            const result = await response.text();
+
+            if (result === "success") {
+                const li = button.closest('li');
+                li.classList.add('bg-danger-subtle');
+                setTimeout(() => li.remove(), 300);
+            } else {
+                alert("Failed to remove project. Try again.");
+            }
+        } catch (e) {
+            alert("Error while removing project.");
+        }
+    }
 
 
-<body>
 
-<h1>Welcome to the Admin Dashboard!</h1>
+    document.addEventListener("DOMContentLoaded", () => {
 
+        const selectAll = document.getElementById("selectAllShowcases");
+        const checkboxes = document.querySelectorAll(".select-showcase");
+        const deleteBtn = document.getElementById("deleteSelectedBtn");
+
+        function updateUI() {
+            let anyChecked = false;
+
+            checkboxes.forEach(cb => {
+                const row = cb.closest("tr");
+
+                if (cb.checked) {
+                    row.classList.add("selected-row");
+                    anyChecked = true;
+                } else {
+                    row.classList.remove("selected-row");
+                }
+            });
+
+            deleteBtn.disabled = !anyChecked;
+        }
+
+        // Select All checkbox
+        selectAll.addEventListener("change", () => {
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateUI();
+        });
+
+        // Individual row checkboxes
+        checkboxes.forEach(cb => {
+            cb.addEventListener("change", () => {
+                if (!cb.checked) {
+                    selectAll.checked = false;
+                }
+                updateUI();
+            });
+        });
+    });
+
+
+</script>
 </body>
 </html>

@@ -1,82 +1,97 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
+    <meta charset="UTF-8">
     <title>Login</title>
-    <style>
-        .error { color: red; font-size: 0.9em; margin: 4px 0 10px 0; }
-        label { display:block; margin-top:10px; }
-        input { padding:6px; width: 280px; max-width: 100%; }
-        button { margin-top:12px; padding:8px 14px; }
-    </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/login.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/navBar.css">
 </head>
 
-<!-- HEADER -->
-<header class="header" th:with="user=${session.loggedInUser}">
-    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+<body>
 
-    <nav class="nav-items" th:with="user=${session.loggedInUser}">
-        <a th:href="@{/MainGallery/HomePage}">Home</a>
-        <a th:href="@{/MainGallery/about}">About</a>
-        <a th:href="@{/MainGallery/contact}">Contact</a>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm"
+     th:with="user=${session.loggedInUser}">
+    <div class="container-fluid">
 
-        <!-- Not logged in -->
-        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
-        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Log in</a>
-
-        <!-- Logged in: role-aware Dashboard + Logout -->
-        <span th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
-    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
-    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
-    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
-    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
-    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
-  </span>
-
-        <!-- ✅ Logout text link -->
-        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
-            Logout
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+            <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
         </a>
 
-        <!-- Avatar icon: Profile if logged in; Login otherwise -->
-        <div class="icon-button" th:with="isLoggedIn=${user != null}">
-            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
-                <i class="fas fa-user"></i>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+            </ul>
+
+            <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+                <img src="/assets/images/website/Profile.png" height="40">
             </a>
-            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
-                <i class="fas fa-user"></i>
+            <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+                <img src="/assets/images/website/Profile.png" height="40">
             </a>
         </div>
+    </div>
+</nav>
+
+<style> body { padding-top: 70px; } </style>
 
 
-        <div class="icon-button">
-            <a th:href="@{/MainGallery/search}"><i class="fas fa-search"></i></a>
-        </div>
-    </nav>
 
-</header>
-<!-- /HEADER -->
+<div class="login-container">
+    <div class="login-card">
+
+        <h2 class="login-title">Sign In</h2>
+
+        <!-- IMPORTANT: Updated th:object -->
+        <form th:action="@{/MainGallery/Login}" th:object="${loginDTO}" method="post">
+
+            <!-- EMAIL -->
+            <label for="emailAddress">Email</label>
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="text" id="emailAddress" th:field="*{emailAddress}" placeholder="Enter Email">
+            </div>
+
+            <!-- Email validation -->
+            <div class="error" th:if="${#fields.hasErrors('emailAddress')}"
+                 th:errors="*{emailAddress}"></div>
 
 
-<body>
-<h1>Login</h1>
+            <!-- PASSWORD -->
+            <label for="password">Password</label>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" th:field="*{password}" placeholder="Password">
+            </div>
 
-<form th:action="@{/MainGallery/Login}" th:object="${user}" method="post">
+            <!-- Password validation -->
+            <div class="error" th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}"></div>
 
-    <!-- Email -->
-    <label for="emailAddress">Email:</label>
-    <input type="text" id="emailAddress" name="emailAddress" th:field="*{emailAddress}" required />
-    <div class="error" th:if="${emailError}" th:text="${emailError}"></div>
+            <a href="#" class="forgot">Forgot Password</a>
 
-    <!-- Password -->
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" th:field="*{password}" required />
-    <div class="error" th:if="${passwordError}" th:text="${passwordError}"></div>
+            <button type="submit" class="login-btn">Sign In</button>
 
-    <button type="submit">Login</button>
-</form>
+            <p class="signup-text">
+                Don’t have an account?
+                <a th:href="@{/MainGallery/Register}">Sign Up</a>
+            </p>
 
-<!-- Optional generic fallback -->
-<p class="error" th:if="${error}" th:text="${error}"></p>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

@@ -1,18 +1,18 @@
 package idm3.project.gallery.controllers;
 
-
+import idm3.project.gallery.model.LoginDTO;
 import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.model.User;
-import idm3.project.gallery.service.ShowcaseService;
-import idm3.project.gallery.service.ProjectService;
-import idm3.project.gallery.service.UserService;
-import idm3.project.gallery.service.ThumbnailService;
-import jakarta.servlet.ServletContext;
+import idm3.project.gallery.service.*;
+
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,45 +20,123 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-@Controller()
-@RequestMapping(value = {"/MainGallery"})
+@Controller
+@RequestMapping("/MainGallery")
 public class MainGalleryController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ShowcaseService showcaseService;
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private UserService userService;
+    @Autowired private ShowcaseService showcaseService;
+    @Autowired private ProjectService projectService;
+    @Autowired private ThumbnailService thumbnailService;
+    @Autowired private SavedProjectService savedProjectService;
 
-    @Autowired
-    private ServletContext servletContext;
-    @Autowired
-    private ThumbnailService thumbnailService;
 
-    // Display Login Page
+    /* ============================================================
+       LOGIN
+       ============================================================ */
+
     @GetMapping("/Login")
     public ModelAndView showLoginPage() {
-        ModelAndView modelAndView = new ModelAndView("login");
-        modelAndView.addObject("user", new User());
-        return modelAndView;
+        ModelAndView mav = new ModelAndView("login");
+        mav.addObject("loginDTO", new LoginDTO()); // <-- IMPORTANT
+        return mav;
     }
+
+    @PostMapping("/Login")
+    public ModelAndView handleLogin(
+            @ModelAttribute("loginDTO") @Valid LoginDTO loginDTO,
+            BindingResult result,
+            HttpSession session) {
+
+        if (result.hasErrors()) {
+            return new ModelAndView("login");
+        }
+
+        ModelAndView mv = new ModelAndView("login");
+
+        User user = userService.findByEmail(loginDTO.getEmailAddress());
+        if (user == null) {
+            result.rejectValue("emailAddress", "invalidEmail", "No account found with that email.");
+            return mv;
+        }
+
+        if (!userService.passwordMatches(user, loginDTO.getPassword())) {
+            result.rejectValue("password", "invalidPassword", "Incorrect password.");
+            return mv;
+        }
+
+        // SUCCESS — store in session
+        session.setAttribute("loggedInUser", user);
+
+        return switch (user.getUserType().toLowerCase()) {
+            case "admin" -> new ModelAndView("redirect:/MainGallery/adminDashboard");
+            case "student" -> new ModelAndView("redirect:/MainGallery/studentDashboard");
+            case "senioradmin" -> new ModelAndView("redirect:/MainGallery/seniorAdminDashboard");
+            case "employer" -> new ModelAndView("redirect:/MainGallery/employerDashboard");
+            default -> new ModelAndView("redirect:/MainGallery/HomePage");
+        };
+    }
+
+    @GetMapping("/Logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/MainGallery/Login";
+    }
+
+
+    /* ============================================================
+       REGISTRATION
+       ============================================================ */
+
+    @GetMapping("/Register")
+    public ModelAndView showRegisterPage() {
+        ModelAndView mav = new ModelAndView("register");
+        mav.addObject("user", new User());
+        return mav;
+    }
+
+    @PostMapping("/Register")
+    public ModelAndView handleRegister(
+            @Valid @ModelAttribute("user") User user,
+            BindingResult result) {
+
+        ModelAndView mv = new ModelAndView("register");
+
+        if (result.hasErrors()) {
+            return mv;
+        }
+
+        // Default student role
+        user.setUserType("STUDENT");
+
+        if (!userService.registerUser(user)) {
+            mv.addObject("error", "An account with this username or email already exists.");
+            return mv;
+        }
+
+        return new ModelAndView("redirect:/MainGallery/Login");
+    }
+
+
+    /* ============================================================
+       DASHBOARDS
+       ============================================================ */
 
     @GetMapping("/studentDashboard")
     public ModelAndView studentDashboard() {
-        ModelAndView modelAndView = new ModelAndView("studentDashboard");
-
-        return modelAndView;
-    }
-
-    @GetMapping("/employerDashboard")
-    public ModelAndView employerDashboard() {
-        return new ModelAndView("employerDashboard");
+        return new ModelAndView("studentDashboard");
     }
 
     @GetMapping("/adminDashboard")
     public ModelAndView adminDashboard() {
-        return new ModelAndView("adminDashboard");
+        ModelAndView mav = new ModelAndView("adminDashboard");
+        mav.addObject("totalShowcases", showcaseService.totalShowcases());
+        mav.addObject("liveShowcases", showcaseService.liveShowcases());
+        mav.addObject("draftShowcases", showcaseService.draftShowcases());
+        mav.addObject("totalProjects", projectService.totalProjects());
+        mav.addObject("recentShowcases", showcaseService.recentShowcases());
+        mav.addObject("recentProjects", projectService.recentProjects());
+        return mav;
     }
 
     @GetMapping("/seniorAdminDashboard")
@@ -66,165 +144,113 @@ public class MainGalleryController {
         return new ModelAndView("seniorAdminDashboard");
     }
 
-    @PostMapping("/Login")
-    public ModelAndView handleLogin(@ModelAttribute("user") User user, HttpSession session) {
-        ModelAndView mv = new ModelAndView("login"); // default back to login on error
-        String email = user.getEmailAddress();
-        String rawPassword = user.getPassword();
 
-        // 1) Check email exists
-        User byEmail = userService.findByEmail(email);
-        if (byEmail == null) {
-            mv.addObject("emailError", "No account found for that email.");
-            return mv;
-        }
+    /* ============================================================
+       HOMEPAGE (CLEAN, SINGLE MAPPING)
+       ============================================================ */
 
-        // 2) Check password correctness
-        if (!userService.passwordMatches(byEmail, rawPassword)) {
-            mv.addObject("passwordError", "Incorrect password.");
-            // Keep email pre-filled so user doesn’t need to retype it
-            User prefill = new User();
-            prefill.setEmailAddress(email);
-            mv.addObject("user", prefill);
-            return mv;
-        }
+    @GetMapping({"/HomePage", ""})
+    public ModelAndView home(
+            HttpSession session,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword) {
 
-        // 3) Success — log in and redirect by role
-        session.setAttribute("loggedInUser", byEmail);
-        String type = byEmail.getUserType();
-        if ("admin".equalsIgnoreCase(type)) {
-            mv.setViewName("redirect:/MainGallery/adminDashboard");
-        }
-        else if ("student".equalsIgnoreCase(type)) {
-            mv.setViewName("redirect:/MainGallery/studentDashboard");
-        }
-        else if ("senioradmin".equalsIgnoreCase(type)) {
-            mv.setViewName("redirect:/MainGallery/seniorAdminDashboard");
-        }
-        else if ("employer".equalsIgnoreCase(type)) {
-            mv.setViewName("redirect:/MainGallery/employerDashboard");
-        } else {
-            mv.setViewName("redirect:/MainGallery/dashboard");
-        }
-        mv.addObject("loggedInUser", byEmail.getEmailAddress());
-        return mv;
-    }
-
-
-    //Logout handler
-
-    @GetMapping("/Logout")
-    public String logout(HttpSession session) {
-        // ✅ Remove all session attributes and end session
-        session.invalidate();
-
-        // ✅ Redirect back to your login page
-        return "redirect:/MainGallery/Login";
-    }
-
-
-
-    @GetMapping("/profile")
-    public ModelAndView viewProfile(HttpSession session) {
-        ModelAndView modelAndView = new ModelAndView("profile");
-
-        // Retrieve the logged-in user from the session
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        // Check if a user is logged in
-        if (loggedInUser != null) {
-            // Pass user details to the view
-            modelAndView.addObject("user", loggedInUser);
-        } else {
-            // If no user is logged in, redirect to the login page
-            modelAndView.setViewName("redirect:/Login");
-        }
-        return modelAndView;
-    }
-
-
-
-
-    // Display Registration Page
-    @GetMapping("/Register")
-    public ModelAndView showRegisterPage() {
-        ModelAndView modelAndView = new ModelAndView("register");
-        modelAndView.addObject("user", new User());
-        return modelAndView;
-    }
-
-    // Handle Registration Submission
-    @PostMapping("/Register")
-    public ModelAndView handleRegister(@ModelAttribute("user") User user) {
-        ModelAndView modelAndView = new ModelAndView();
-        user.setUserType("STUDENT");
-        if (userService.registerUser(user)) {
-            modelAndView.setViewName("redirect:/MainGallery/Login");
-            modelAndView.addObject("message", "Registration successful! Please log in.");
-        } else {
-            modelAndView.setViewName("register");
-            modelAndView.addObject("error", "Registration failed. Username or email might already exist.");
-        }
-        return modelAndView;
-    }
-    @RequestMapping(value = {"/HomePage", ""})
-    public ModelAndView ModelAndViewsetUpIndexPageData() {
-        System.out.println("ModelAndViewsetUpIndexPageData");
         ModelAndView mav = new ModelAndView("homepage");
-        // find all projects
-        List<Project> allProjects = projectService.findAllOrderedByCreationDate();
 
-        generateThumbnailProject(allProjects);
-        List<Showcase> allShowcases = generateThumbnailShowcases();
+        Page<Project> projectPage;
 
-        mav.addObject("AllProjectsRecentFirst", allProjects);
-        mav.addObject("AllLiveShowcases", allShowcases);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            projectPage = projectService.searchProjectsPaginated(keyword, page);
+        } else {
+            projectPage = projectService.getPaginatedProjects(page);
+        }
+
+        generateProjectThumbnails(projectPage.getContent());
+
+        List<Showcase> showcases = generateShowcaseThumbnails();
+
+        mav.addObject("projectPage", projectPage);
+        mav.addObject("keyword", keyword);
+        mav.addObject("AllLiveShowcases", showcases);
+
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user != null && user.getUserType().equalsIgnoreCase("employer")) {
+            mav.addObject("savedIds", savedProjectService.getSavedProjectIds(user));
+        }
+
         return mav;
-
-
     }
 
-    private List<Showcase> generateThumbnailShowcases() {
-        List<Showcase> allShowcases = showcaseService.findAllLive();
-        try{
 
-        String imageDirPathShowcase = "src/main/resources/static/assets/images/showcases/";
-        String thumbnailDirPathShowcase = "src/main/resources/static/assets/images/showcases/thumbnail/";
-        for(Showcase showcase : allShowcases) {
+    /* ============================================================
+       SEARCH
+       ============================================================ */
 
-            System.out.println(imageDirPathShowcase + showcase.getImage());
-            File image = new File(imageDirPathShowcase + "/" +showcase.getImage());
-            System.out.println("thumbnail:" + thumbnailDirPathShowcase + "thumb_" + image.getName());
-            File thumbnailFile = new File(thumbnailDirPathShowcase + "/" + "thumb_" + image.getName());
-            thumbnailService.generateThumbnailShowcase(image, thumbnailFile);
-            System.out.println("Image uploaded and thumbnail created: " + thumbnailFile.getAbsolutePath());
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-        System.out.println("Failed to upload image or create thumbnail.");
-    }
-        return allShowcases;
+    @GetMapping("/searchProjects")
+    public ModelAndView searchProjects(@RequestParam(required = false) String keyword) {
+        ModelAndView mav = new ModelAndView("searchResults");
+        mav.addObject("projects", projectService.searchProjects(keyword));
+        mav.addObject("keyword", keyword);
+        return mav;
     }
 
-    private void generateThumbnailProject(List<Project> allProjects) {
-        // Generate thumbnail
-        try{
-           String imageDirPathProject = "src/main/resources/static/assets/images/projects/";
-           String thumbnailDirPathProject = "src/main/resources/static/assets/images/projects/thumbnail/";
 
-        for(Project project : allProjects) {
+    /* ============================================================
+       SHOWCASE VIEW + REMOVE PROJECT
+       ============================================================ */
 
-            System.out.println(imageDirPathProject + project.getProjectHeroImage());
-            File image = new File(imageDirPathProject + "/" +project.getProjectHeroImage());
-            System.out.println("thumbnail:" + thumbnailDirPathProject + "thumb_" + image.getName());
-            File thumbnailFile = new File(thumbnailDirPathProject + "/" + "thumb_" + image.getName());
-            thumbnailService.generateThumbnail(image, thumbnailFile);
-            System.out.println("Image uploaded and thumbnail created: " + thumbnailFile.getAbsolutePath());
+    @GetMapping("/browseShowcase/{showcaseId}")
+    public ModelAndView viewShowcaseById(@PathVariable Long showcaseId) {
+        ModelAndView mav = new ModelAndView("browseShowcase");
+        Showcase showcase = showcaseService.findById(showcaseId);
+
+        if (showcase != null) {
+            mav.addObject("showcase", showcase);
+            mav.addObject("projects", showcase.getProjects());
+        } else {
+            mav.addObject("error", "Showcase not found.");
+            mav.addObject("projects", List.of());
         }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to upload image or create thumbnail.");
-        }
+
+        return mav;
+    }
+
+    @PostMapping("/browseShowcase/{showcaseId}/removeProject/{projectId}")
+    public String removeProjectFromShowcase(
+            @PathVariable Long showcaseId,
+            @PathVariable Long projectId) {
+
+        showcaseService.removeProjectFromShowcase(showcaseId, projectId);
+        return "redirect:/MainGallery/browseShowcase/" + showcaseId;
+    }
+
+
+    /* ============================================================
+       THUMBNAIL HELPERS
+       ============================================================ */
+
+    private void generateProjectThumbnails(List<Project> projects) {
+        try {
+            String base = "src/main/resources/static/assets/images/projects/";
+            for (Project project : projects) {
+                File img = new File(base + project.getProjectHeroImage());
+                File thumb = new File(base + "thumbnail/thumb_" + img.getName());
+                thumbnailService.generateThumbnail(img, thumb);
+            }
+        } catch (IOException ignored) {}
+    }
+
+    private List<Showcase> generateShowcaseThumbnails() {
+        List<Showcase> showcases = showcaseService.findAllLive();
+        try {
+            String base = "src/main/resources/static/assets/images/showcases/";
+            for (Showcase sc : showcases) {
+                File img = new File(base + sc.getImage());
+                File thumb = new File(base + "thumbnail/thumb_" + img.getName());
+                thumbnailService.generateThumbnailShowcase(img, thumb);
+            }
+        } catch (IOException ignored) {}
+        return showcases;
     }
 
 }

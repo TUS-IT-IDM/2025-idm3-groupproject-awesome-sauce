@@ -1,33 +1,62 @@
 package idm3.project.gallery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="user")
+@Table(name = "user")
+@ValidEmployer
+//works? but error due dependency version
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userid")
     private long userId;
-    @Column(name = "FirstName", length=50)
+
+    @NotBlank(message = "First name is required")
+    @Size(max = 50, message = "First name cannot exceed 50 characters")
+    @Column(name = "FirstName", length = 50)
     private String firstName;
-    @Column(name = "surname", nullable=true, length=225)
+
+    @NotBlank(message = "Surname is required")
+    @Size(max = 225, message = "Surname cannot exceed 225 characters")
+    @Column(name = "surname", length = 225)
     private String surname;
-    @Column(name = "emailaddress", length=100)
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please enter a valid email address")
+    @Size(max = 100, message = "Email cannot exceed 100 characters")
+    @Column(name = "emailaddress", length = 100)
     private String emailAddress;
-    @Column(name = "usertype", length=50)
+
+    @NotBlank(message = "User type is required")
+    @Column(name = "usertype", length = 50)
     private String userType;
-    @Column(name = "username",length=50)
+
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 50, message = "Username must be between 3–50 characters")
+    @Column(name = "username", length = 50)
     private String userName;
-    @Column(name = "password", nullable=true, length=225)
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 5, message = "Password must be at least 5 characters long")
+    @Column(name = "password", length = 225)
     private String password;
-    @Column(name = "organization", nullable=true, length=225)
+
+    @Size(max = 225, message = "Organization cannot exceed 225 characters")
+    @Column(name = "organization", length = 225)
     private String organization;
+
+    @Column(name = "ProfilePicture", length = 255)
+    private String profilePicture;
 
     @Override
     public String toString() {
@@ -38,8 +67,8 @@ public class User {
                 ", emailAddress='" + emailAddress + '\'' +
                 ", userType='" + userType + '\'' +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
                 ", organization='" + organization + '\'' +
+                ", profilePicture='" + profilePicture + '\'' +
                 '}';
     }
 }
