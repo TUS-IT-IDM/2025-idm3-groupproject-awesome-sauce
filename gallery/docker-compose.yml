@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   mysql:
-    #  build:
-    #    context: .
-    #    dockerfile: ./Docker/db/Dockerfile
+  #  build:
+  #    context: .
+  #    dockerfile: ./Docker/db/Dockerfile
     image: mysql:8.0
     container_name: gallery-mysql
-    hostname: db
+    hostname: mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_DATABASE: ${DB_NAME:-idm3project}
+      MYSQL_DATABASE: ${DB_NAME:-future_proof_db}
       MYSQL_USER: ${DB_USERNAME:-gallery}
       MYSQL_PASSWORD: ${DB_PASSWORD:-root}
     ports:

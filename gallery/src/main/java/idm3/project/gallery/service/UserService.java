@@ -88,26 +88,26 @@ public class UserService {
         String filename = user.getUserId() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
 
-    public void uploadProfilePicture(User user, MultipartFile file) throws IOException {
-        if (file != null && !file.isEmpty()) {
-            // Ensure folder exists
-            Files.createDirectories(Paths.get(PROFILE_PICTURE_DIR));
-
-            // Name file uniquely using user ID
-            String filename = user.getUserId() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(PROFILE_PICTURE_DIR, filename);
-
-            // Save file to static folder
-            Files.write(path, file.getBytes());
-
-            // Store filename (relative to profile/ directory)
-            user.setProfilePicture(filename);
-            userRepository.save(user);
+//        public void uploadProfilePicture (User user, MultipartFile file) throws IOException {
+//            if (file != null && !file.isEmpty()) {
+//                // Ensure folder exists
+//                Files.createDirectories(Paths.get(PROFILE_PICTURE_DIR));
+//
+//                // Name file uniquely using user ID
+//
+//
+//                // Save file to static folder
+//                Files.write(path, file.getBytes());
+//
+//                // Store filename (relative to profile/ directory)
+//                user.setProfilePicture(filename);
+//                userRepository.save(user);
+//            }
         }
-    }
 
 
-    public User refreshUser(Long userId) {
-        return userRepository.findById(userId).orElse(null);
-    }
+//        public User refreshUser (Long userId){
+//            return userRepository.findById(userId).orElse(null);
+//        }
+//    }
 }
