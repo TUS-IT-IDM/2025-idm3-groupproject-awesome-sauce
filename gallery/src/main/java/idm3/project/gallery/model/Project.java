@@ -1,5 +1,6 @@
 package idm3.project.gallery.model;
 
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -7,11 +8,30 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "project")
+=======
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import idm3.project.gallery.model.Showcase;
+import idm3.project.gallery.model.User;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Getter
+@Setter
+@Entity
+
+@Table(name="project")
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectID")
+<<<<<<< HEAD
     private Long projectID; // 🔧 FIXED (field name should start lowercase)
 
 
@@ -159,6 +179,53 @@ public class Project {
 
     // ---- equals(), hashCode(), toString() left unchanged; they will still work ----
 
+=======
+    private long projectId;
+
+    @Column(name = "ProjectName")
+    private String projectName;
+
+    @Column(name = "ProjectDescription",length=500)
+    private String projectDescription;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "UserID")
+    private User user;
+
+    @Column(name = "Category")
+    private String category;
+
+    @Column(name = "ProjectDescriptionSummary")
+    private String projectDescriptionSummary;
+
+    @Column(name = "ProjectHeroImage")
+    private String projectHeroImage;
+
+    @Column(name = "CreationDate")
+    private java.sql.Date creationDate;
+
+    @Column(name = "additionalDoc")
+    private String additionalDoc;
+
+
+
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "projectId=" + projectId +
+                ", projectName='" + projectName + '\'' +
+                ", projectDescription='" + projectDescription + '\'' +
+                ", user=" + user +
+                ", category='" + category + '\'' +
+                ", projectDescriptionSummary='" + projectDescriptionSummary + '\'' +
+                ", projectHeroImage='" + projectHeroImage + '\'' +
+                ", creationDate=" + creationDate +
+                ", additionalDoc='" + additionalDoc + '\'' +
+                '}';
+    }
+
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 }
 
 

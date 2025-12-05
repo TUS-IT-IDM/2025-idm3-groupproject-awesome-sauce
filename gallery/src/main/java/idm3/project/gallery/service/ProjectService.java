@@ -2,7 +2,10 @@ package idm3.project.gallery.service;
 
 import idm3.project.gallery.model.Project;
 import idm3.project.gallery.repository.ProjectRepository;
+<<<<<<< HEAD
 import jakarta.persistence.EntityNotFoundException;
+=======
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,16 +15,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 public class ProjectService {
+<<<<<<< HEAD
     private static final String UPLOAD_DIR = "/gallery/src/main/resources/static.assets/images/projects/thumbnail/";
+=======
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 
     @Autowired
     private ProjectRepository projectRepo;
 
+<<<<<<< HEAD
     public Project saveProject(Project project) {
         // ✅ Minimal fix: preserve existing CreationDate when editing
         if (project.getProjectId() != null) {
@@ -87,10 +93,59 @@ public class ProjectService {
     public List<Project> searchProjects(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             return (List<Project>) projectRepo.findAll();
+=======
+
+    public List<Project> findAllOrderedByCreationDate() {
+        return projectRepo.findAllByOrderByCreationDateDesc();
+    }
+
+
+    public List<Project> findAll() {
+        return (List<Project>) projectRepo.findAll();
+    }
+
+
+    public long totalProjects() {
+        return projectRepo.count();
+    }
+
+
+    public List<Project> recentProjects() {
+        return projectRepo.findTop5ByOrderByCreationDateDesc();
+    }
+
+
+    public Project findById(long id) {
+        return projectRepo.findById(id).orElse(null);
+    }
+
+
+    public Project save(Project project) {
+        return projectRepo.save(project);
+    }
+
+
+    public void deleteById(long id) {
+        projectRepo.deleteById(id);
+    }
+
+    public List<Project> searchProjects(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return (List<Project>) projectRepo.findAll();
+
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
         }
         return projectRepo.findByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(
                 keyword, keyword);
     }
+<<<<<<< HEAD
+=======
+
+
+
+
+
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 }
 
 

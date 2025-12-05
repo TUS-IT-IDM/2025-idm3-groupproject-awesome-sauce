@@ -172,7 +172,7 @@ public class MainGalleryController {
         System.out.println("ModelAndViewsetUpIndexPageData");
         ModelAndView mav = new ModelAndView("homepage");
         // find all projects
-        List<Project> allProjects = projectService.findAllProjects();
+        List<Project> allProjects = projectService.findAllOrderedByCreationDate();
 
         generateThumbnailProject(allProjects);
         List<Showcase> allShowcases = generateThumbnailShowcases();

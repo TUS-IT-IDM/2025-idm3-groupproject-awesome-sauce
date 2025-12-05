@@ -8,8 +8,21 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Long> {
+<<<<<<< HEAD
     List<Project> findByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(
             String name, String description);
+=======
+    // Find all projects ordered by creation date descending
+    long count();
+    List<Project> findAllByOrderByCreationDateDesc();
+    List<Project> findTop5ByOrderByCreationDateDesc();
+
+    List<Project> findByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(
+            String name, String description);
+
+
+
+>>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
 }
 
 
