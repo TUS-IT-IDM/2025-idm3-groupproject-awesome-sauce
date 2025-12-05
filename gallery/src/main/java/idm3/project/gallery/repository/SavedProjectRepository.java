@@ -23,7 +23,7 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
 
     // 🔹 Fetch only project IDs (used to disable "Save" button in UI)
     @Query("""
-           select sp.project.projectId 
+           select sp.project.projectID 
            from SavedProject sp 
            where sp.employer = :employer
            """)
@@ -60,7 +60,7 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
            from SavedProject sp 
            join fetch sp.project 
            where sp.employer = :employer 
-             and sp.project.projectId = :projectId
+             and sp.project.projectID = :projectId
            """)
     SavedProject findByEmployerAndProjectId(User employer, Long projectId);
 

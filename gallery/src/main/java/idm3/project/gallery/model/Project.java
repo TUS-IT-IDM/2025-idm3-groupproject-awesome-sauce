@@ -1,16 +1,6 @@
 package idm3.project.gallery.model;
 
-<<<<<<< HEAD
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "project")
-=======
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import idm3.project.gallery.model.Showcase;
 import idm3.project.gallery.model.User;
 import jakarta.persistence.*;
@@ -18,6 +8,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDateTime;
+
+
+
+
+
+
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
@@ -25,13 +25,13 @@ import java.util.List;
 @Entity
 
 @Table(name="project")
->>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
+
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectID")
-<<<<<<< HEAD
+
     private Long projectID; // 🔧 FIXED (field name should start lowercase)
 
 
@@ -179,33 +179,8 @@ public class Project {
 
     // ---- equals(), hashCode(), toString() left unchanged; they will still work ----
 
-=======
-    private long projectId;
 
-    @Column(name = "ProjectName")
-    private String projectName;
 
-    @Column(name = "ProjectDescription",length=500)
-    private String projectDescription;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "UserID")
-    private User user;
-
-    @Column(name = "Category")
-    private String category;
-
-    @Column(name = "ProjectDescriptionSummary")
-    private String projectDescriptionSummary;
-
-    @Column(name = "ProjectHeroImage")
-    private String projectHeroImage;
-
-    @Column(name = "CreationDate")
-    private java.sql.Date creationDate;
-
-    @Column(name = "additionalDoc")
-    private String additionalDoc;
 
 
 
@@ -213,10 +188,10 @@ public class Project {
     @Override
     public String toString() {
         return "Project{" +
-                "projectId=" + projectId +
+                "projectId=" + projectID +
                 ", projectName='" + projectName + '\'' +
                 ", projectDescription='" + projectDescription + '\'' +
-                ", user=" + user +
+                ", user=" + userID +
                 ", category='" + category + '\'' +
                 ", projectDescriptionSummary='" + projectDescriptionSummary + '\'' +
                 ", projectHeroImage='" + projectHeroImage + '\'' +
@@ -225,50 +200,8 @@ public class Project {
                 '}';
     }
 
->>>>>>> a74175bf623a8378acb3bac00e6ff18619c39234
+
 }
 
 
 
-//    public Long getProjectId() { return ProjectID; }
-//    public void setProjectId(Long projectId) { this.ProjectID = projectId; }
-//
-//    public String getProjectTitle() { return ProjectName; }
-//    public void setProjectTitle(String projectTitle) { this.ProjectName = projectTitle; }
-//
-//    public String getProjectDescription() { return ProjectDescription; }
-//    public void setProjectDescription(String ProjectDescription) { this.ProjectDescription = ProjectDescription; }
-//
-//    public User getUserID() { return UserID; }
-//    public void setUserID(User UserID) { this.UserID = UserID; }
-//
-//    public String getCategory() { return Category; }
-//    public void setCategory(String Category) { this.Category = ProjectHeroImage; }
-//
-//    public String getProjectDescriptionSummary() { return ProjectDescriptionSummary; }
-//    public void setProjectDescriptionSummary(String ProjectDescriptionSummary) { this.ProjectDescriptionSummary = ProjectDescriptionSummary; }
-//
-//    public LocalDateTime getCreationDate() { return CreationDate; }
-//    public void setCreationDate(LocalDateTime CreationDate) { this.CreationDate = CreationDate; }
-//
-//    public String getAdditionalDoc() { return additionalDoc; }
-//    public void setAdditionalDoc(String additionalDoc) { this.additionalDoc = additionalDoc; }
-//
-//    public String getProjectImage() { return ProjectHeroImage; }
-//    public void setProjectImage(String ProjectHeroImage) { this.ProjectHeroImage = ProjectHeroImage; }
-
-//    @Override
-//    public String toString() {
-//        return "Project(" +
-//                "projectId=" + ProjectID +
-//                ", projectTitle='" + ProjectName + '\'' +
-//                ", projectDescription='" + ProjectDescription + '\'' +
-//                ", projectImage='" + ProjectHeroImage + '\'' +
-//                ", userID='" + UserID + '\'' +
-//                ", category='" + Category + '\'' +
-//                ", projectDescriptionSummary='" + ProjectDescriptionSummary + '\'' +
-//                ", creationDate='" + CreationDate + '\'' +
-//                ", additionalDoc='" + additionalDoc + '\'' +
-//                ')';
-//    }
-//}

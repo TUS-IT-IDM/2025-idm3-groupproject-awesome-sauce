@@ -144,7 +144,7 @@ public class AdminController {
     public List<Project> getProjectsForShowcase(@PathVariable("id") Long id) {
         List<Project> projects = showcaseService.getProjectsForShowcase(id);
         // Prevent recursive user data loops
-        projects.forEach(p -> p.setUser(null));
+//        projects.forEach(p -> p.setUser(null));
         return projects;
     }
 
