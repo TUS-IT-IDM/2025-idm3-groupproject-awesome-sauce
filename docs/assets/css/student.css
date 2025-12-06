@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+body {
+  padding-top: 70px; /* fixed navbar */
+  font-family: "Afacad", sans-serif;
+  background: #f5f7fb;
+  margin: 0;
+}
+
+.student-dashboard {
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.dashboard-title {
+  font-weight: 600;
+  color: #083b4d;
+}
+
+.dashboard-subtitle {
+  color: #51606b;
+  max-width: 600px;
+}
+
+/* Generic dashboard card styling */
+.dashboard-card {
+  border-radius: 12px;
+  border: 1px solid rgba(8, 59, 77, 0.08);
+}
+
+/* Little soft pill look for showcases */
+.showcase-pill {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(8, 59, 77, 0.06);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}

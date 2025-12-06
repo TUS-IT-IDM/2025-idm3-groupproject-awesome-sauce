@@ -34,9 +34,9 @@ public class UserController {
         }
 
         // Always fetch the most up-to-date user info from the DB
-//        User refreshedUser = userService.refreshUser(user.getUserId());
-//        session.setAttribute("loggedInUser", refreshedUser);
-//        model.addAttribute("user", refreshedUser);
+        User refreshedUser = userService.refreshUser(user.getUserId());
+        session.setAttribute("loggedInUser", refreshedUser);
+        model.addAttribute("user", refreshedUser);
 
         return "profile"; // points to profile.html
     }
@@ -61,8 +61,8 @@ public class UserController {
             userService.uploadProfilePicture(user, file);
 
             // ✅ Reload user data so new image shows immediately
-//            User updatedUser = userService.refreshUser(user.getUserId());
-//            session.setAttribute("loggedInUser", updatedUser);
+            User updatedUser = userService.refreshUser(user.getUserId());
+            session.setAttribute("loggedInUser", updatedUser);
 
             ra.addFlashAttribute("message", "✅ Profile picture updated successfully!");
         } catch (IOException e) {

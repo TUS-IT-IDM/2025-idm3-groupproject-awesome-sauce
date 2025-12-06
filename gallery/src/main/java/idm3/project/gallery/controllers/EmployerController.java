@@ -5,10 +5,14 @@ import idm3.project.gallery.model.SavedProject;
 import idm3.project.gallery.model.User;
 import idm3.project.gallery.service.SavedProjectService;
 import idm3.project.gallery.service.SavedProjectService.SaveResult;
+
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -23,7 +27,10 @@ public class EmployerController {
     @Autowired
     private SavedProjectService savedProjectService;
 
-    // ✅ Save project
+
+    // ------------------------------------------------------------
+    // SAVE PROJECT
+    // ------------------------------------------------------------
     @PostMapping("/employer/saveProject")
     public String saveProject(@RequestParam("projectId") Long projectId,
                               @RequestParam(value = "note", required = false) String note,
@@ -47,23 +54,42 @@ public class EmployerController {
         return "redirect:/MainGallery/HomePage";
     }
 
-    // ✅ Employer dashboard
-    @GetMapping("/employerDashboard")
-    public String employerDashboard(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggedInUser");
 
+
+    // ------------------------------------------------------------
+    // EMPLOYER DASHBOARD (PAGINATED + SEARCH)
+    // ------------------------------------------------------------
+    @GetMapping("/employerDashboard")
+    public String employerDashboard(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(required = false) String keyword,
+                                    HttpSession session,
+                                    Model model) {
+
+        User user = (User) session.getAttribute("loggedInUser");
         if (user == null || !"employer".equalsIgnoreCase(user.getUserType())) {
             return "redirect:/MainGallery/Login";
         }
 
-        model.addAttribute("saved", savedProjectService.getSavedProjects(user));
+        Page<SavedProject> savedPage;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            savedPage = savedProjectService.searchSavedPaginated(keyword, user, page);
+        } else {
+            savedPage = savedProjectService.getSavedProjectsPaginated(user, page);
+        }
+
+        model.addAttribute("savedPage", savedPage);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("user", user);
 
-        // ✅ template location
         return "employerDashboard";
     }
 
-    // ✅ Update note
+
+
+    // ------------------------------------------------------------
+    // UPDATE NOTE
+    // ------------------------------------------------------------
     @PostMapping("/employer/updateNote")
     public String updateNote(@RequestParam("projectId") Long projectId,
                              @RequestParam("note") String note,
@@ -71,29 +97,37 @@ public class EmployerController {
                              RedirectAttributes ra) {
 
         User user = (User) session.getAttribute("loggedInUser");
+
         if (user == null || !"employer".equalsIgnoreCase(user.getUserType())) {
             ra.addFlashAttribute("error", "Please log in as an employer to update notes.");
             return "redirect:/MainGallery/Login";
         }
 
         savedProjectService.updateNoteForSavedProject(user, projectId, note);
+
         ra.addFlashAttribute("message", "✅ Note updated.");
         return "redirect:/MainGallery/employerDashboard";
     }
 
-    // ✅ Delete saved project
+
+
+    // ------------------------------------------------------------
+    // DELETE SAVED PROJECT
+    // ------------------------------------------------------------
     @PostMapping("/employer/deleteSaved")
     public String deleteSavedProject(@RequestParam("projectId") Long projectId,
                                      HttpSession session,
                                      RedirectAttributes ra) {
 
         User user = (User) session.getAttribute("loggedInUser");
+
         if (user == null || !"employer".equalsIgnoreCase(user.getUserType())) {
             ra.addFlashAttribute("error", "Please log in as an employer to delete saved projects.");
             return "redirect:/MainGallery/Login";
         }
 
         boolean deleted = savedProjectService.deleteSavedProject(user, projectId);
+
         if (deleted) {
             ra.addFlashAttribute("message", "🗑️ Project removed from your saved list.");
         } else {
@@ -103,35 +137,14 @@ public class EmployerController {
         return "redirect:/MainGallery/employerDashboard";
     }
 
-    // ✅ Search saved projects
-    @GetMapping("/searchSaved")
-    public ModelAndView searchSaved(@RequestParam(value = "keyword", required = false) String keyword,
-                                    HttpSession session) {
-        User employer = (User) session.getAttribute("loggedInUser");
-        if (employer == null) {
-            return new ModelAndView("redirect:/MainGallery/Login");
-        }
 
-        List<Project> filtered = savedProjectService.searchSavedProjects(employer, keyword);
 
-        List<SavedProject> results = filtered.stream()
-                .map(p -> {
-                    SavedProject sp = new SavedProject();
-                    sp.setProject(p);
-                    sp.setEmployer(employer);
-                    return sp;
-                })
-                .collect(Collectors.toList());
-
-        ModelAndView mav = new ModelAndView("employerDashboard");
-        mav.addObject("saved", results);
-        mav.addObject("keyword", keyword);
-        return mav;
-    }
-
-    // ✅ Drill-down page
+    // ------------------------------------------------------------
+    // FULL VIEW PAGE
+    // ------------------------------------------------------------
     @GetMapping("/employer/saved/{projectId}")
     public ModelAndView viewSavedProject(@PathVariable Long projectId, HttpSession session) {
+
         User employer = (User) session.getAttribute("loggedInUser");
         if (employer == null) {
             return new ModelAndView("redirect:/MainGallery/Login");
@@ -144,13 +157,19 @@ public class EmployerController {
 
         ModelAndView mav = new ModelAndView("employer/employerSavedDetails");
         mav.addObject("saved", saved);
+
         return mav;
     }
 
-    // ✅ API used by the JS modal to fetch saved project details
+
+
+    // ------------------------------------------------------------
+    // JSON API FOR MODAL
+    // ------------------------------------------------------------
     @GetMapping("/employer/saved/{projectId}/json")
     @ResponseBody
     public SavedProject getSavedProjectJson(@PathVariable Long projectId, HttpSession session) {
+
         User employer = (User) session.getAttribute("loggedInUser");
         if (employer == null) return null;
 

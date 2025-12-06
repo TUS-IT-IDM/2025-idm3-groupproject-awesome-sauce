@@ -3,11 +3,18 @@ package idm3.project.gallery.repository;
 import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.SavedProject;
 import idm3.project.gallery.model.User;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,21 +22,21 @@ import java.util.Optional;
 @Repository
 public interface SavedProjectRepository extends JpaRepository<SavedProject, Long> {
 
-    // 🔹 Check if a project is already saved by this employer
+    // 🔹 Check if project already saved
     boolean existsByEmployerAndProject(User employer, Project project);
 
-    // 🔹 Find a specific saved project
+    // 🔹 Find specific saved project
     Optional<SavedProject> findByEmployerAndProject(User employer, Project project);
 
-    // 🔹 Fetch only project IDs (used to disable "Save" button in UI)
+    // 🔹 Only get saved project IDs
     @Query("""
-           select sp.project.projectID 
+           select sp.project.projectId 
            from SavedProject sp 
            where sp.employer = :employer
            """)
     List<Long> findProjectIdsByEmployer(User employer);
 
-    // 🔹 Fetch all saved projects with joined Project data
+    // 🔹 All saved projects (fetch join)
     @Query("""
            select sp
            from SavedProject sp
@@ -39,7 +46,7 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
            """)
     List<SavedProject> findAllByEmployerOrderByIdDesc(User employer);
 
-    // 🔹 Update note for a saved project (inline update)
+    // 🔹 Update note
     @Modifying
     @Transactional
     @Query("""
@@ -50,20 +57,44 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
            """)
     int updateNote(User employer, Project project, String note);
 
-    // 🔹 Delete a project from employer’s saved list (not the project itself)
+    // 🔹 Delete a saved project
     @Transactional
     void deleteByEmployerAndProject(User employer, Project project);
 
-    // 🔹 Find by employer and projectId (for drill-down or quick access)
+    // 🔹 Find by employer + projectId
     @Query("""
            select sp 
            from SavedProject sp 
            join fetch sp.project 
            where sp.employer = :employer 
-             and sp.project.projectID = :projectId
+             and sp.project.projectId = :projectId
            """)
     SavedProject findByEmployerAndProjectId(User employer, Long projectId);
 
-    // 🔹 Fetch all SavedProject entries for one employer (used in search)
+    // 🔹 Fetch raw saved-project list (used in search)
     List<SavedProject> findByEmployer(User employer);
+
+
+    /* ============================================================
+       PAGINATION METHODS
+       ============================================================ */
+
+    // 🔹 Paginated "all saved" list (NO fetch join — required for paging)
+    Page<SavedProject> findAllByEmployerOrderByIdDesc(User employer, Pageable pageable);
+
+    // 🔹 Paginated search inside saved projects
+    @Query("""
+           select sp
+           from SavedProject sp
+           where sp.employer.userId = :employerId
+             and (
+                   lower(sp.project.projectName) like :keyword
+                or lower(sp.project.projectDescription) like :keyword
+                or lower(sp.project.category) like :keyword
+             )
+           order by sp.id desc
+           """)
+    Page<SavedProject> searchSavedProjectsForEmployer(@Param("employerId") Long employerId,
+                                                      @Param("keyword") String keyword,
+                                                      Pageable pageable);
 }

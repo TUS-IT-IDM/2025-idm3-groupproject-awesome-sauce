@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employer Dashboard</title>
+
+  <!-- Bootstrap + Icons (CSS only, no JS needed) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Your styles -->
+  <link rel="stylesheet" href="../assets/css/navBar.css">
+  <link rel="stylesheet" href="../assets/css/employer.css">
+  <link rel="stylesheet" href="../assets/css/footer.css">
+
+  <!-- favicon -->
+  <link rel="icon" type="image/x-icon"
+        href="../assets/images/website/Future_Proof_Logo_Icon.png">
+</head>
+
+<body>
+
+  <!-- Navbar (copy the shared navbar here; set Employer link to active) -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="../assets/images/website/Future_Proof_Logo.png"
+             alt="Logo" height="40" class="me-2">
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarContent"
+              aria-controls="navbarContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+        <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../Kamil/student-dashboard.html">Student Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link active" href="../Mateusz/employer-dashboard.html">Employer Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../Janice/admin-dashboard.html">Admin Dashboard</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-primary" href="register.html">Register</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-primary" href="login.html">Login</a>
+          </li>
+        </ul>
+
+        <a href="profile.html">
+          <img src="../assets/images/website/Profile.png"
+               alt="Profile Icon" height="40" class="me-2">
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Top header + search (uses employer.css styles) -->
+  <main class="container mt-4">
+
+    <div class="top-header-container mb-4">
+      <h2 class="top-header-title mb-0">Employer Dashboard</h2>
+
+      <form class="search-wrapper" action="#" method="get">
+        <!-- Filter button -->
+        <button type="button" class="search-filter-btn" disabled>
+          <i class="fa-solid fa-filter"></i>
+        </button>
+
+        <!-- Search input -->
+        <input type="text"
+               name="keyword"
+               class="search-input"
+               placeholder="Search your saved projects...">
+
+        <!-- Search button -->
+        <button type="submit" class="search-btn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Saved projects grid -->
+    <section class="mb-5">
+      <h3 class="mb-3 text-white">Saved Projects</h3>
+
+      <div class="row g-3">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="../assets/images/projects/thumbnail/thumb_p1sea.jpg"
+                 class="card-img-top"
+                 alt="Project thumbnail">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Sea Explorer</h5>
+              <p class="card-text">
+                Interactive data visualisation for marine ecosystems, built by TUS students.
+              </p>
+              <p class="mt-auto mb-1"><strong>Student:</strong> Alex Murphy</p>
+              <p class="mb-2"><strong>Course:</strong> Creative Digital Computing</p>
+              <span class="badge bg-success">Shortlisted</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="../assets/images/projects/thumbnail/thumb_p2snow.jpg"
+                 class="card-img-top"
+                 alt="Project thumbnail">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">AR Winter Experience</h5>
+              <p class="card-text">
+                Mobile AR experience combining real-time snow simulation with festive characters.
+              </p>
+              <p class="mt-auto mb-1"><strong>Student:</strong> Jamie Lee</p>
+              <p class="mb-2"><strong>Course:</strong> Software Design with XR</p>
+              <span class="badge bg-primary">New</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img src="../assets/images/projects/thumbnail/thumb_p6artshowcase.jpg"
+                 class="card-img-top"
+                 alt="Project thumbnail">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Future City Visualisation</h5>
+              <p class="card-text">
+                Concept-driven 3D visualisation of sustainable cities with focus on UX and storytelling.
+              </p>
+              <p class="mt-auto mb-1"><strong>Student:</strong> Robin O&rsquo;Connell</p>
+              <p class="mb-2"><strong>Course:</strong> Digital Art & Design</p>
+              <span class="badge bg-secondary">Reviewed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pagination styled by employer.css (segmented-pagination) -->
+    <div class="d-flex justify-content-center mt-4 mb-5">
+      <nav aria-label="Saved projects pagination">
+        <ul class="pagination segmented-pagination">
+          <li class="page-item disabled">
+            <span class="page-link">&lt;</span>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">1</span>
+          </li>
+          <li class="page-item">
+            <span class="page-link">2</span>
+          </li>
+          <li class="page-item">
+            <span class="page-link">3</span>
+          </li>
+          <li class="page-item">
+            <span class="page-link">&gt;</span>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+  </main>
+
+  <!-- Optional footer (same as home page, if you want it here) -->
+  <footer class="fp-footer">
+    <div class="fp-footer-container">
+      <div class="fp-footer-left">
+        <img src="../assets/images/website/Future_Proof_Logo.png"
+             class="fp-logo" alt="FutureProof Logo">
+
+        <p class="fp-tagline">
+          Empowering students to showcase their<br>
+          skills and connect with employers<br>
+          &ndash; from portfolio to profession.
+        </p>
+      </div>
+      <!-- You can copy your full footer from index.html if you want it identical -->
+    </div>
+  </footer>
+
+</body>
+</html>

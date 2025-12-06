@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+body{
+background-color: #3A9CA2;
+font-family: 'Afacad', sans-serif;
+}
+
+/* Center container */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card */
+.login-card {
+    background: #ffffff;
+    padding: 40px 45px;
+    border-radius: 8px;
+    width: 420px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    text-align: left;
+}
+
+/* Title */
+.login-title {
+    font-family: Arial;
+    font-weight: bold;
+    text-align: center;
+    color: #004858;
+    margin-bottom: 25px;
+}
+
+/* Labels */
+label {
+    font-family: "Afacad", sans-serif;
+    margin-top: 12px;
+    display: block;
+    color: #003f4f;
+}
+
+/* Force border radius on login inputs */
+.login-card input,
+.login-card .input-group input {
+    border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+}
+
+/* Input group with icon */
+.input-group {
+
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7c8a92;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px 10px 38px;
+    border: 1px solid #d4d8da;
+    font-size: 16px;
+    height: 45px;
+}
+
+/* Forgot password link */
+.forgot {
+    font-size: 15px;
+    font-style:italic;
+    font-weight:bold;
+    color: #003f5c;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+/* Button */
+.login-btn {
+    width: 100%;
+    background-color: #084C55;
+    color: white;
+    font-size: 18px;
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #0a5e68;
+}
+
+/* Signup text */
+.signup-text {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.signup-text a {
+    color: #003f5c;
+    font-weight: 600;
+}
+
+.error {
+    color: #d9534f;
+    font-size: 14px;
+}
+
+

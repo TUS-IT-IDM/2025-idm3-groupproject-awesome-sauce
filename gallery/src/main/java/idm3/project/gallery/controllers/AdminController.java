@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -144,7 +145,7 @@ public class AdminController {
     public List<Project> getProjectsForShowcase(@PathVariable("id") Long id) {
         List<Project> projects = showcaseService.getProjectsForShowcase(id);
         // Prevent recursive user data loops
-//        projects.forEach(p -> p.setUser(null));
+        projects.forEach(p -> p.setUser(null));
         return projects;
     }
 
@@ -177,7 +178,7 @@ public class AdminController {
     }
 
     // ===============================================================
-// ❌ REMOVE PROJECT FROM SHOWCASE
+//  REMOVE PROJECT FROM SHOWCASE
 // ===============================================================
     @PostMapping("/{showcaseId}/removeProject/{projectId}")
     @ResponseBody
@@ -191,6 +192,26 @@ public class AdminController {
             return "error";
         }
     }
+
+
+    @PostMapping("/bulk-delete")
+    public String bulkDelete(@RequestParam(required = false, name="selectedIds")
+                             List<Long> selectedIds,
+                             RedirectAttributes redirectAttributes) {
+
+        if (selectedIds == null || selectedIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "No showcases selected.");
+            return "redirect:/MainGallery/admin/showcases";
+        }
+
+        showcaseService.deleteShowcasesByIds(selectedIds);
+
+        redirectAttributes.addFlashAttribute("success",
+                selectedIds.size() + " showcase(s) deleted successfully.");
+
+        return "redirect:/MainGallery/admin/showcases";
+    }
+
 
 
 }

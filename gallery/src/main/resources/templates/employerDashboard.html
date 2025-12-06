@@ -1,90 +1,178 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Employer Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/navBar.css">
+    <link rel="stylesheet" href="/assets/css/employer.css">
+    <link rel="stylesheet" href="/assets/css/footer.css">
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/images/website/Future_Proof_Logo_Icon.png">
+
 </head>
 
 <body>
-<header class="header p-3 border-bottom" th:with="user=${session.loggedInUser}">
-    <div class="container d-flex justify-content-between align-items-center">
-        <a th:href="@{/MainGallery/HomePage}" class="logo fs-4 fw-bold text-decoration-none">LOGO GOES HERE</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" th:with="user=${session.loggedInUser}">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+            <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
+        </a>
 
-        <nav class="nav-items d-flex align-items-center gap-3">
-            <a th:href="@{/MainGallery/HomePage}" class="text-decoration-none">Home</a>
-            <a th:if="${user == null}" th:href="@{/MainGallery/Register}" class="text-primary text-decoration-none">Register</a>
-            <a th:if="${user == null}" th:href="@{/MainGallery/Login}" class="text-primary text-decoration-none">Sign-In</a>
-            <a th:if="${user != null}" th:href="@{/MainGallery/profile}" class="text-decoration-none">Profile</a>
-            <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')" class="text-decoration-none">
-                Logout
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+                </li>
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+                </li>
+
+                <li>
+        <span class ="dashboard" th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
+    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
+  </span>
+                </li>
+
+            </ul>
+
+            <!-- Profile Icon -->
+            <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
             </a>
-            <div class="icon-button" th:with="isLoggedIn=${user != null}">
-                <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}"><i class="fas fa-user"></i></a>
-                <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}"><i class="fas fa-user"></i></a>
-            </div>
-        </nav>
+            <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+                <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
+            </a>
+        </div>
     </div>
-</header>
+</nav>
 
-<div class="container my-5" th:with="user=${session.loggedInUser}">
-    <h1 class="mb-4">Welcome to the Employer Dashboard!</h1>
+<!-- End of NavBar -->
 
-    <!-- 🔍 Search -->
-    <div class="mb-4">
-        <form th:action="@{/MainGallery/searchSaved}" method="get" class="d-flex gap-2">
-            <input type="text" name="keyword"
+<!-- Add top padding so content isn't hidden under fixed navbar -->
+<style>
+    body {
+        padding-top: 100px;
+    }
+    .nav-link {
+        color: #4c6873 !important;
+        font-weight: 500;
+        margin: 0 6px;
+        transition: color 0.2s ease;
+    }
+    .nav-link:hover, .nav-link.active {
+        color: #005b73 !important;
+    }
+    .navbar-brand span {
+        font-size: 1.2rem;
+        letter-spacing: 0.5px;
+    }
+
+
+</style>
+
+
+
+    <div class="top-header-container">
+        <h2 class="top-header-title">
+            Welcome back, <span th:text="${session.loggedInUser.userName}">User</span>!
+        </h2>
+
+
+        <form th:action="@{/MainGallery/employerDashboard}" method="get" class="search-wrapper">
+
+            <!-- FILTER BUTTON -->
+            <button type="button" class="search-filter-btn">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+
+            <!-- SEARCH INPUT -->
+            <input type="text"
+                   name="keyword"
                    th:value="${keyword}"
                    placeholder="Search your saved projects..."
-                   class="form-control" style="max-width:400px;">
-            <button type="submit" class="btn btn-primary">Search</button>
+                   class="search-input">
+
+            <!-- SEARCH BUTTON -->
+            <button type="submit" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
         </form>
+
+        <!-- Clear Search (appears only after searching) -->
         <a th:if="${keyword != null and !#strings.isEmpty(keyword)}"
            th:href="@{/MainGallery/employerDashboard}"
-           class="small text-muted text-decoration-none ms-2">
+           class="clear-search-link">
             Clear search
         </a>
     </div>
 
+<div class="card-layout">
+
     <!-- 🗂 No results -->
-    <div th:if="${#lists.isEmpty(saved)}" class="text-center text-muted py-5">
+    <div th:if="${savedPage.totalElements == 0}" class="text-center text-muted py-5">
         <h5>No saved projects yet</h5>
         <p>Browse the homepage and click “Save to list” on projects you want to track.</p>
         <a th:href="@{/MainGallery/HomePage}" class="btn btn-primary mt-2">Browse Projects</a>
     </div>
 
     <!-- 💾 Saved Projects Grid -->
-    <div class="row" th:if="${!#lists.isEmpty(saved)}">
-        <div class="col-md-6 col-lg-4 mb-4" th:each="sp : ${saved}">
-            <div class="card h-100 shadow-sm">
-                <img th:src="@{'/assets/images/projects/thumbnail/thumb_' + ${sp.project.projectHeroImage}}"
-                     class="card-img-top" alt="Project Image"
-                     style="height:180px;object-fit:cover;">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title" th:text="${sp.project.projectName}">Project Name</h5>
-                    <p class="card-text text-truncate" th:text="${sp.project.projectDescription}">Project description</p>
+    <div class="row" th:if="${savedPage.totalElements > 0}">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" th:each="sp : ${savedPage.content}">
 
+            <div class="card h-100 shadow-sm">
+
+                <img th:src="@{'/assets/images/projects/thumbnail/thumb_' + ${sp.project.projectHeroImage}}"
+                     class="card-img-top"
+                     alt="Project Image"
+                    >
+
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title" th:text="${sp.project.projectName}">Project Name</h5>
+                    <p class="card-text text-truncate"
+                       th:text="${sp.project.projectDescription}">
+                    </p>
 
                     <div class="mt-auto pt-3 d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-info w-100"
+
+                        <button class="btn-view-details"
                                 th:onclick="'openSavedProjectModal(' + ${sp.project.projectId} + ')'"
                                 type="button">
-                            <i class="fas fa-eye"></i> View Details
+                            View Details
                         </button>
+
                         <form th:action="@{/MainGallery/employer/deleteSaved}" method="post" style="display:inline;">
                             <input type="hidden" name="projectId" th:value="${sp.project.projectId}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                            <button type="submit" class="btn-delete"
                                     onclick="return confirm('Remove this project from your saved list?');">
-                                Delete
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- 🟣 Modal: Project Drill-down -->
 <div class="modal fade" id="savedProjectModal" tabindex="-1" aria-labelledby="savedProjectModalLabel" aria-hidden="true">
@@ -130,8 +218,110 @@
 </div>
 
 
-<footer class="text-center text-muted py-4 border-top">
-    © 2024 TUS GALLERY
+<!-- PAGINATION (Saved Projects) -->
+<div class="d-flex justify-content-center mt-4" th:if="${savedPage.totalElements > 0}"
+>
+
+    <nav aria-label="Saved Projects Pagination">
+        <ul class="pagination segmented-pagination">
+
+            <!-- Previous -->
+            <li class="page-item"
+                th:classappend="${savedPage.first} ? ' disabled'">
+                <a class="page-link"
+                   th:href="@{/MainGallery/employerDashboard(page=${savedPage.number - 1})}">
+                    &lt;
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, savedPage.totalPages - 1)}"
+                th:classappend="${i == savedPage.number} ? ' active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/MainGallery/employerDashboard(page=${i})}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item"
+                th:classappend="${savedPage.last} ? ' disabled'">
+                <a class="page-link"
+                   th:href="@{/MainGallery/employerDashboard(page=${savedPage.number + 1})}">
+                    &gt;
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+</div>
+
+
+
+
+<!-- FOOTER -->
+
+<footer class="fp-footer">
+    <div class="fp-footer-container">
+
+        <!-- LEFT -->
+        <div class="fp-footer-left">
+            <img src="/assets/images/website/Future_Proof_Logo.png" class="fp-logo" alt="FutureProof Logo">
+
+            <p class="fp-tagline">
+                Empowering students to showcase their<br>
+                skills and connect with employers<br>
+                – from portfolio to profession.
+            </p>
+
+            <div class="fp-socials">
+                <a href="#"><img src="/assets/images/website/twitter.png" alt="X"></a>
+                <a href="#"><img src="/assets/images/website/linkedin.png" alt="LinkedIn"></a>
+                <a href="#"><img src="/assets/images/website/facebook.png" alt="Facebook"></a>
+                <a href="#"><img src="/assets/images/website/instagram.png" alt="Instagram"></a>
+            </div>
+        </div>
+
+        <!-- RIGHT GROUP (middle + right) -->
+        <div class="fp-footer-right-group">
+
+            <!-- Middle Column -->
+            <div class="fp-footer-column">
+                <h4>Technological University of<br>The Shannon</h4>
+                <p>
+                    Athlone Campus<br>
+                    University Road, Athlone<br>
+                    Co. Westmeath<br>
+                    N37 HD68
+                </p>
+                <p>
+                    Phone: <a href="tel:+3539096468000">+353 90 6468000</a><br>
+                    Email: <a href="mailto:reception.midlands@tus.ie">reception.midlands@tus.ie</a>
+                </p>
+            </div>
+
+            <!-- Right Column -->
+            <div class="fp-footer-column">
+                <h4>Technological University of<br>The Shannon</h4>
+                <p>
+                    Moylish Campus<br>
+                    Moylish Park<br>
+                    Limerick<br>
+                    V94 EC5T
+                </p>
+                <p>
+                    Phone: <a href="tel:+35361293000">+353 61 293000</a><br>
+                    Email: <a href="mailto:reception.midwest@tus.ie">reception.midwest@tus.ie</a>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <img src="/assets/images/website/Future_Proof_Icon_Logo_Low_Opacity.png" class="fp-footer-watermark" alt="">
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>

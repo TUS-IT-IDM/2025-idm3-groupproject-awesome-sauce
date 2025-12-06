@@ -94,4 +94,9 @@ public class ShowcaseService {
             showcaseRepository.save(showcase);
         }
     }
+
+    public void deleteShowcasesByIds(List<Long> ids) {
+        showcaseRepository.deleteAllById(ids);
+    }
+
 }

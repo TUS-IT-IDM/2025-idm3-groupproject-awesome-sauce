@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&display=swap');
+
+/* Footer Base */
+.fp-footer {
+    background-color: #E8DBC7;
+    position: relative;
+    overflow: hidden;
+    font-family: "Afacad", sans-serif;
+    margin: 0 !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+/* FLEX CONTAINER */
+.fp-footer-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 60px; /* keep spacing similar to your original look */
+    display: flex;
+    justify-content: space-between;
+}
+
+/* LEFT COLUMN */
+.fp-footer-left {
+    max-width: 430px;
+    font-size: 20px;/* matches screenshot width */
+}
+
+.fp-logo {
+    margin-bottom: 20px;
+}
+
+
+
+/* Columns inside right group */
+.fp-footer-column {
+    width: 257px; /* keeps columns narrow like screenshot */
+}
+
+/* Typography */
+.fp-footer-column h4{
+    color: #003F4A;
+    font-weight: 700;
+}
+
+.fp-footer-column a {
+    color: #003F4A;
+    text-decoration: underline;
+}
+
+.fp-footer-column p,
+.fp-tagline {
+    color: #062D36;
+    font-size:20px;
+}
+
+/* Social icons */
+.fp-socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.fp-socials img {
+    width: 50px;
+    transition: 0.2s ease;
+}
+
+.fp-socials img:hover {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+.fp-footer-watermark {
+    position: absolute;
+    right: 0;
+    top: -90px; /* move watermark upward */
+    height: 140%;
+    pointer-events: none;
+}
+
+
