@@ -11,12 +11,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -117,9 +119,9 @@ public class ProjectService {
         return projectRepo.save(project);
     }
 
-    public void deleteById(long id) {
-        projectRepo.deleteById(id);
-    }
+//    public void deleteById(long id) {
+//        projectRepo.deleteById(id);
+//    }
 
 
     /* --------------------------------------------------------
