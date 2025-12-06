@@ -1,5 +1,6 @@
 package idm3.project.gallery.controllers;
 
+import idm3.project.gallery.model.Project;
 import idm3.project.gallery.model.SavedProject;
 import idm3.project.gallery.model.User;
 import idm3.project.gallery.service.SavedProjectService;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
-@RequestMapping("/MainGallery")
+@RequestMapping("/MainGallery") // ✅ back to original structure
 public class EmployerController {
 
     @Autowired
