@@ -13,11 +13,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication
+
 @ComponentScan({"idm3.project.gallery.service", "idm3.project.gallery.controllers"})
 @EntityScan("idm3.project.gallery.model")
 @EnableJpaRepositories("idm3.project.gallery.repository")
-
+@SpringBootApplication
 public class GalleryApplication implements CommandLineRunner {
 	@Autowired
 

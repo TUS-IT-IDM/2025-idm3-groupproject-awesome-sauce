@@ -37,9 +37,10 @@ CREATE TABLE `project` (
                            `Category` varchar(255) DEFAULT NULL,
                            `ProjectDescriptionSummary` varchar(255) DEFAULT NULL,
                            `ProjectHeroImage` varchar(255) DEFAULT NULL,
-                           `CreationDate` date NOT NULL DEFAULT current_timestamp(),
+                           `CreationDate` DATETIME NOT NULL DEFAULT current_timestamp(),
                            `additionalDoc` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Dumping data for table `project`
