@@ -1,0 +1,1 @@
+ This folder should contain a static website to be published through Github Pages

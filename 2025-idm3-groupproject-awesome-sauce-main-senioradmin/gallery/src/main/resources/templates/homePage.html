@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/lcstyle.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/css/navBar.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" th:with="user=${session.loggedInUser}">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+      <img src="/assets/images/website/Future_Proof_Logo.png" alt="Logo" height="40" class="me-2">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
+
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+        </li>
+
+        <li>
+        <span class ="dashboard" th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
+    <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+    <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+    <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+    <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+    <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
+  </span>
+        </li>
+
+      </ul>
+
+      <!-- Profile Icon -->
+      <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
+      </a>
+      <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="me-2">
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- End of NavBar -->
+
+<!-- Add top padding so content isn't hidden under fixed navbar -->
+<style>
+  body {
+    padding-top: 50px;
+  }
+  .nav-link {
+    color: #4c6873 !important;
+    font-weight: 500;
+    margin: 0 6px;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: #005b73 !important;
+  }
+  .navbar-brand span {
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+  }
+
+  /*<!-- Nav Bar 'About' Slide Animation -->*/
+
+  /*html {*/
+  /*  scroll-behavior: smooth;*/
+  /*}*/
+
+  /*:target {*/
+  /*  scroll-margin-top: 80px; !* adjusts for fixed navbar height *!*/
+  /*}*/
+
+</style>
+
+
+
+
+
+<!-- Employer Messages -->
+<div class="container mt-3">
+  <div th:if="${message}" class="alert alert-success text-center" th:text="${message}"></div>
+  <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
+</div>
+
+<!-- Showcase Carousel Hero -->
+<div id="showcaseHeroCarousel" class="carousel slide showcase-hero" data-bs-ride="carousel">
+
+  <!-- Indicators -->
+  <div class="carousel-indicators">
+    <button th:each="s,iter : ${AllLiveShowcases}"
+            type="button"
+            data-bs-target="#showcaseHeroCarousel"
+            th:data-bs-slide-to="${iter.index}"
+            th:classappend="${iter.first ? 'active' : ''}">
+    </button>
+  </div>
+
+  <!-- Background Slides -->
+  <div class="carousel-inner">
+
+    <div th:each="s,iter : ${AllLiveShowcases}"
+         th:class="${iter.first} ? 'carousel-item active showcase-slide' : 'carousel-item showcase-slide'">
+
+      <img th:src="@{'/assets/images/showcases/thumbnail/thumb_' + ${s.image}}"
+           class="d-block w-100 showcase-bg"
+           alt="Showcase Image">
+
+      <div class="showcase-overlay"></div>
+    </div>
+
+  </div>
+
+  <!-- Static Foreground Content -->
+  <div class="showcase-hero-content">
+
+    <div class="hero-box title-box">
+      <span class="hero-title"
+            th:text="${showcase != null ? showcase.name : 'FutureProof'}">
+</span>
+
+    </div>
+
+    <div class="hero-box desc-box">
+      <p class="hero-desc"
+         th:text="${showcase != null ? showcase.description
+                   : 'A comprehensive platform to help hirers and creators navigate the creative world.'}">
+      </p>
+    </div>
+
+    <div class="hero-buttons">
+      <a th:href="@{/MainGallery/browseShowcases}" class="hero-btn">
+        BROWSE SHOWCASES <i class="fa-solid fa-magnifying-glass"></i>
+      </a>
+
+      <a th:href="@{/MainGallery/searchProjects}" class="hero-btn">
+        BROWSE PROJECTS <i class="fa-solid fa-magnifying-glass"></i>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#showcaseHeroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#showcaseHeroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+</div>
+
+<!-- Optional Search -->
+<form th:action="@{/MainGallery/searchProjects}" method="get" class="d-flex ms-3 me-3" role="search">
+  <input type="text" name="keyword"
+         th:value="${keyword}"
+         placeholder="Search projects..."
+         class="form-control rounded-pill"
+         style="max-width: 220px;">
+</form>
+
+<!--&lt;!&ndash; Intro Section &ndash;&gt;-->
+<!--<div class="container mt-4">-->
+<!--  <div class="row">-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-layer-group" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <section id="about">-->
+<!--          <div class="container">-->
+<!--            <h2 class="mb-3">About Us</h2>-->
+<!--            <p>-->
+<!--              FutureProof is dedicated to connecting students, employers, and educators-->
+<!--              through innovation and collaboration...-->
+<!--            </p>-->
+<!--          </div>-->
+<!--        </section>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-seedling" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <p class="work-heading" style="font-size: 24px;"><strong>Connect</strong></p>-->
+<!--        <p class="work-text">We are a dynamic platform proudly offered by TUS, dedicated to empowering students and bridging the gap between education and industry.</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">-->
+<!--      <div class="work text-center">-->
+<!--        <i class="fas fa-circle-nodes" style="font-size: 2rem; margin-top: 20px;"></i>-->
+<!--        <p class="work-heading" style="font-size: 24px;"><strong>Network</strong></p>-->
+<!--        <p class="work-text">If you're an employer seeking the brightest minds, TUS Gallery is your trusted partner on this exciting educational and professional adventure.</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!-- Projects Section -->
+<div class="container mt-4">
+
+  <div class="row">
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="project : ${AllProjectsRecentFirst}">
+      <div class="card">
+        <img th:src="@{'/assets/images/projects/thumbnail/thumb_' + ${project.projectHeroImage}}"
+             class="card-img-top" alt="Project Image" style="height: 200px; object-fit: cover;" />
+        <div class="card-body">
+          <h5 class="card-title" th:text="${project.projectName}"></h5>
+          <p class="card-text" style="max-height: 3rem; overflow: hidden;"
+             th:text="${project.projectDescription}"></p>
+
+          <!-- See Project button -->
+          <a th:href="@{'/project/projectDetails/' + ${project.projectId}}" class="btn btn-primary btn-sm">See Project</a>
+
+          <!-- Save to List with optional note (employers only) -->
+          <th:block th:with="user=${session.loggedInUser}">
+            <th:block th:if="${user != null and #strings.equalsIgnoreCase(user.userType, 'employer')}">
+              <form th:action="@{/MainGallery/employer/saveProject}" method="post"
+                    style="display:inline-block; margin-left:8px; max-width:100%;">
+                <input type="hidden" name="projectId" th:value="${project.projectId}" />
+                <th:block th:if="${_csrf != null}">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                </th:block>
+
+                <!-- Note (optional) -->
+                <input name="note" type="text"
+                       class="form-control form-control-sm d-inline-block"
+                       style="width: 55%; vertical-align: middle; margin-right:6px; margin-top:6px;"
+                       placeholder="Add a note (optional)" />
+
+                <button type="submit"
+                        class="btn btn-outline-primary btn-sm"
+                        th:disabled="${savedIds != null and savedIds.contains(project.projectId)}"
+                        th:text="${(savedIds != null and savedIds.contains(project.projectId)) ? 'Saved' : 'Save to list'}">
+                </button>
+              </form>
+            </th:block>
+          </th:block>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="copy">© 2024 TUS GALLERY</div>
+
+  <div class="bottom-links">
+    <div class="links">
+      <span>More Info</span>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <div class="links">
+      <span>Social Links</span>
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
