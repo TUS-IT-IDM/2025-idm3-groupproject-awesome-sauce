@@ -1,5 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<header class="header" th:with="user=${session.loggedInUser}">
+    <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+
+    <nav class="nav-items">
+        <a th:href="@{/MainGallery/HomePage}">Home</a>
+
+        <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
+        <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
+
+        <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
+        <!-- ✅ Logout text link -->
+        <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
+            Logout
+        </a>
+
+        <!-- Avatar icon: Profile if logged in; Login otherwise -->
+        <div class="icon-button" th:with="isLoggedIn=${user != null}">
+            <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
+                <i class="fas fa-user"></i>
+            </a>
+            <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</header>
+
+
 <head>
     <meta charset="UTF-8">
     <title>just the dashboard - look at the user type!!!</title>

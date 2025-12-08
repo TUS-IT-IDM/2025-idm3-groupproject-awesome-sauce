@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard</title>
+    <title>Senior Admin Dashboard</title>
 </head>
 
 <header class="header" th:with="user=${session.loggedInUser}">
@@ -15,6 +15,7 @@
         <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Sign-In</a>
 
         <a th:if="${user != null}" th:href="@{/MainGallery/profile}">Profile</a>
+        <a th:if="${user !=null}" th:href="@{/MainGallery/seniorAdmin/admins}">Manage Admins</a>
         <!-- ✅ Logout text link -->
         <a th:if="${user != null}" th:href="@{/MainGallery/Logout}" onclick="return confirm('Log out now?')">
             Logout
@@ -35,7 +36,8 @@
 
 <body>
 
-<h1>Welcome to the Student Dashboard!</h1>
+<h1>Welcome to the Senior Admin Dashboard!</h1>
+
 
 </body>
 </html>
