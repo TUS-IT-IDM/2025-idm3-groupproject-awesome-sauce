@@ -35,7 +35,8 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
       <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
         <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="#footer-contact">Contact</a></li>
 
         <li class="nav-item" th:if="${user == null}">
           <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
@@ -214,7 +215,7 @@
     <form th:action="@{/MainGallery/HomePage}" method="get" class="fp-search-form">
 
       <!-- FILTER BUTTON -->
-      <button type="button" class="fp-filter-btn">
+      <button type="button" class="fp-filter-btn" id="fpFilterToggle">
         <i class="fa-solid fa-filter"></i>
         <span>Filter</span>
       </button>
@@ -232,19 +233,10 @@
 
     </form>
 
-    <!-- CATEGORY TAGS -->
-    <div class="fp-tags">
-      <span class="fp-tag">Engineering & Tech</span>
-      <span class="fp-tag">IT & Software</span>
-      <span class="fp-tag">Science & Health</span>
-      <span class="fp-tag">Business & Enterprise</span>
-      <span class="fp-tag">Art, Design & Media</span>
-      <span class="fp-tag">Social Sciences & Humanities</span>
-    </div>
+
 
   </div>
 </div>
-
 
 
 <!-- Projects Section (Paginated) -->
@@ -349,11 +341,58 @@
 </div>
 
 
+<!-- SLIDE-IN FILTER PANEL -->
+<div id="fpFilterSidepanel" class="fp-filter-sidepanel">
+  <div class="fp-filter-header d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Filter projects</h5>
+    <button type="button" class="btn-close" aria-label="Close" id="fpFilterClose"></button>
+  </div>
+
+  <form th:action="@{/MainGallery/HomePage}" method="get" class="fp-filter-form">
+
+    <!-- Keep current search keyword when applying filters -->
+    <input type="hidden" name="keyword" th:value="${keyword}" />
+
+    <div class="fp-filter-group mb-3">
+      <label class="fp-filter-label">Category</label>
+      <select class="form-select" name="category">
+        <option value="" th:selected="${category == null or category == ''}">All categories</option>
+        <option value="Digital Media" th:selected="${category == 'Digital Media'}">Digital Media</option>
+        <option value="IT" th:selected="${category == 'IT'}">IT & Software</option>
+        <option value="organic chemistry" th:selected="${category == 'organic chemistry'}">Organic Chemistry</option>
+        <option value="ART" th:selected="${category == 'ART'}">Art</option>
+      </select>
+    </div>
+
+    <div class="fp-filter-group mb-4">
+      <label class="fp-filter-label">Sort by</label>
+      <select class="form-select" name="sortBy">
+        <option value="" th:selected="${sortBy == null or sortBy == ''}">Newest first</option>
+        <option value="OLDEST" th:selected="${sortBy == 'OLDEST'}">Oldest first</option>
+        <option value="NAME_ASC" th:selected="${sortBy == 'NAME_ASC'}">Name A–Z</option>
+        <option value="NAME_DESC" th:selected="${sortBy == 'NAME_DESC'}">Name Z–A</option>
+      </select>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="fp-filter-apply w-100">
+        Apply filters
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<!-- DARK OVERLAY BEHIND PANEL -->
+<div id="fpFilterOverlay" class="fp-filter-overlay"></div>
+
+
 
 
 <!-- FOOTER -->
 
-<footer class="fp-footer">
+<footer class="fp-footer" id="footer-contact">
+
   <div class="fp-footer-container">
 
     <!-- LEFT -->
@@ -487,21 +526,49 @@
         }, 200);
     }
 
-
+// filter panel
 
     document.addEventListener("DOMContentLoaded", function () {
       const carouselEl = document.getElementById("showcaseHeroCarousel");
 
       carouselEl.addEventListener("slid.bs.carousel", function () {
 
-        // 🚫 Do NOT update text before browse mode is enabled
         if (!carouselEl.classList.contains("browse-mode-enabled")) {
           return;
         }
 
-        // ✅ Update only after browsing is activated
         updateHeroShowcaseText();
       });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("fpFilterToggle");
+      const sidepanel = document.getElementById("fpFilterSidepanel");
+      const overlay = document.getElementById("fpFilterOverlay");
+      const closeBtn = document.getElementById("fpFilterClose");
+
+      if (!toggleBtn || !sidepanel || !overlay) return;
+
+      function openFilter() {
+        sidepanel.classList.add("open");
+        overlay.classList.add("show");
+      }
+
+      function closeFilter() {
+        sidepanel.classList.remove("open");
+        overlay.classList.remove("show");
+      }
+
+      toggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        openFilter();
+      });
+
+      overlay.addEventListener("click", closeFilter);
+
+      if (closeBtn) {
+        closeBtn.addEventListener("click", closeFilter);
+      }
     });
 
 

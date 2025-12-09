@@ -106,6 +106,137 @@ body {
     text-decoration: underline;
 }
 
+/* ===== Employer filter sidebar (matches homepage style) ===== */
+
+.fp-filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    max-width: 80%;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1050;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Afacad', sans-serif;
+}
+
+.fp-filter-sidebar.open {
+    transform: translateX(0);
+}
+
+.fp-filter-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.fp-filter-sidebar-header h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #003f4f;
+}
+
+.fp-filter-close {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #4c6873;
+}
+
+.fp-filter-sidebar-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* overlay behind sidebar */
+.fp-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+    z-index: 1040;
+}
+
+.fp-filter-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* reuse same filter form styles as homepage */
+.fp-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.fp-filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #4c6873;
+}
+
+.fp-filter-select {
+    border-radius: 999px;
+    border: 1px solid rgba(76, 104, 115, 0.25);
+    padding: 0.4rem 0.9rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.fp-filter-select:focus {
+    border-color: #007b83;
+    box-shadow: 0 0 0 2px rgba(0, 123, 131, 0.15);
+}
+
+.fp-filter-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fp-filter-clear {
+    font-size: 0.85rem;
+    color: #4c6873;
+    text-decoration: underline;
+}
+
+.fp-filter-clear:hover {
+    color: #003f4f;
+}
+
+.fp-filter-apply {
+    border: none;
+    border-radius: 999px;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #00a3a3, #007b83);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 123, 131, 0.28);
+    cursor: pointer;
+}
+
+.fp-filter-apply:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+
+
 /* ---------------------------------------------------------
    CARD WRAPPER
 --------------------------------------------------------- */
@@ -137,6 +268,18 @@ body {
     color: #555;
 
 }
+
+.bulk-actions-bar {
+    /* optional extra spacing control if you want more than mt-3 */
+    /* margin-top: 1.5rem; */
+}
+
+.select-all-label {
+    font-size: 20px;      /* bigger than .small */
+    font-weight: 600;        /* semi-bold for readability */
+    color: white;          /* slightly darker so it stands out */
+}
+
 
 /* ---------------------------------------------------------
    CARD BUTTONS

@@ -7,7 +7,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/assets/css/navBar.css" rel="stylesheet">
   <link href="/assets/css/showcase.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/footer.css">
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/x-icon" href="/assets/images/website/Future_Proof_Logo_Icon.png">
 </head>
 
 <!-- Navbar -->
@@ -25,8 +30,6 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
       <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
         <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
 
         <li class="nav-item" th:if="${user == null}">
           <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
@@ -46,15 +49,6 @@
         </li>
 
       </ul>
-
-      <!-- Optional Search -->
-      <form th:action="@{/MainGallery/searchProjects}" method="get" class="d-flex ms-3 me-3" role="search">
-        <input type="text" name="keyword"
-               th:value="${keyword}"
-               placeholder="Search projects..."
-               class="form-control rounded-pill"
-               style="max-width: 220px;">
-      </form>
 
       <!-- Profile Icon -->
       <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
@@ -139,26 +133,68 @@
 
 <!-- end of container -->
 
-<!-- Footer -->
-<footer class="footer">
-  <h4 style="color: white;">LOGO GOES HERE</h4><br>
-  <div class="copy">© 2024 TUS GALLERY</div>
+<!-- FOOTER -->
 
-  <div class="bottom-links">
-    <div class="links">
-      <span>More Info</span>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+<footer class="fp-footer" id="footer-contact">
+
+  <div class="fp-footer-container">
+
+    <!-- LEFT -->
+    <div class="fp-footer-left">
+      <img src="/assets/images/website/Future_Proof_Logo.png" class="fp-logo" alt="FutureProof Logo">
+
+      <p class="fp-tagline">
+        Empowering students to showcase their<br>
+        skills and connect with employers<br>
+        – from portfolio to profession.
+      </p>
+
+      <div class="fp-socials">
+        <a href="#"><img src="/assets/images/website/twitter.png" alt="X"></a>
+        <a href="#"><img src="/assets/images/website/linkedin.png" alt="LinkedIn"></a>
+        <a href="#"><img src="/assets/images/website/facebook.png" alt="Facebook"></a>
+        <a href="#"><img src="/assets/images/website/instagram.png" alt="Instagram"></a>
+      </div>
     </div>
 
-    <div class="links">
-      <span>Social Links</span>
-      <a href="#"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
+    <!-- RIGHT GROUP (middle + right) -->
+    <div class="fp-footer-right-group">
+
+      <!-- Middle Column -->
+      <div class="fp-footer-column">
+        <h4>Technological University of<br>The Shannon</h4>
+        <p>
+          Athlone Campus<br>
+          University Road, Athlone<br>
+          Co. Westmeath<br>
+          N37 HD68
+        </p>
+        <p>
+          Phone: <a href="tel:+3539096468000">+353 90 6468000</a><br>
+          Email: <a href="mailto:reception.midlands@tus.ie">reception.midlands@tus.ie</a>
+        </p>
+      </div>
+
+      <!-- Right Column -->
+      <div class="fp-footer-column">
+        <h4>Technological University of<br>The Shannon</h4>
+        <p>
+          Moylish Campus<br>
+          Moylish Park<br>
+          Limerick<br>
+          V94 EC5T
+        </p>
+        <p>
+          Phone: <a href="tel:+35361293000">+353 61 293000</a><br>
+          Email: <a href="mailto:reception.midwest@tus.ie">reception.midwest@tus.ie</a>
+        </p>
+      </div>
+
     </div>
+
   </div>
+
+  <img src="/assets/images/website/Future_Proof_Icon_Logo_Low_Opacity.png" class="fp-footer-watermark" alt="">
 </footer>
 
 </body>

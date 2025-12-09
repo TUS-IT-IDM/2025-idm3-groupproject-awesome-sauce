@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  mysql:
+  #  build:
+  #    context: .
+  #    dockerfile: ./Docker/db/Dockerfile
+    image: mysql:8.0
+    container_name: gallery-mysql
+    hostname: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-future_proof_db}
+      MYSQL_USER: ${DB_USERNAME:-gallery}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - "./Docker/db:/docker-entrypoint-initdb.d"
+    networks:
+      - gallery-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Docker/app/Dockerfile
+    container_name: gallery-app
+    hostname: app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: gallery-mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-idm3project}
+      DB_USERNAME: ${DB_USERNAME:-gallery}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:-docker-secret-key-change-this-minimum-256-bits-required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+    ports:
+      - "${SERVER_PORT:-8081}:8080"
+    networks:
+      - gallery-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Database Management Service (phpMyAdmin)
+  phpmyadmin:
+    container_name: gallery-phpmyadmin
+    hostname: phpmyadmin
+    networks:
+      - gallery-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8888:80'
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: "root"
+
+  nginx-proxy:
+    build:
+      context: .
+      dockerfile: ./Docker/proxy/Dockerfile
+    container_name: gallery-proxy
+    hostname: proxy
+
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/log/nginx:/var/log/nginx"
+    depends_on:
+      - app
+    networks:
+      - gallery-network
+
+networks:
+  gallery-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local

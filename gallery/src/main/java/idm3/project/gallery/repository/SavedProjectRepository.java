@@ -28,15 +28,15 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
     // 🔹 Find specific saved project
     Optional<SavedProject> findByEmployerAndProject(User employer, Project project);
 
-    // 🔹 Only get saved project IDs
+    // 🔹 Only get saved project IDs (⚠️ field name fixed to projectId)
     @Query("""
-           select sp.project.projectId 
-           from SavedProject sp 
+           select sp.project.projectID
+           from SavedProject sp
            where sp.employer = :employer
            """)
-    List<Long> findProjectIdsByEmployer(User employer);
+    List<Long> findProjectIdsByEmployer(@Param("employer") User employer);
 
-    // 🔹 All saved projects (fetch join)
+    // 🔹 All saved projects (fetch join, non-paginated)
     @Query("""
            select sp
            from SavedProject sp
@@ -44,7 +44,7 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
            where sp.employer = :employer
            order by sp.id desc
            """)
-    List<SavedProject> findAllByEmployerOrderByIdDesc(User employer);
+    List<SavedProject> findAllByEmployerOrderByIdDesc(@Param("employer") User employer);
 
     // 🔹 Update note
     @Modifying
@@ -52,10 +52,12 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
     @Query("""
            update SavedProject sp
            set sp.note = :note
-           where sp.employer = :employer 
+           where sp.employer = :employer
              and sp.project = :project
            """)
-    int updateNote(User employer, Project project, String note);
+    int updateNote(@Param("employer") User employer,
+                   @Param("project") Project project,
+                   @Param("note") String note);
 
     // 🔹 Delete a saved project
     @Transactional
@@ -63,15 +65,16 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
 
     // 🔹 Find by employer + projectId
     @Query("""
-           select sp 
-           from SavedProject sp 
-           join fetch sp.project 
-           where sp.employer = :employer 
-             and sp.project.projectId = :projectId
+           select sp
+           from SavedProject sp
+           join fetch sp.project
+           where sp.employer = :employer
+             and sp.project.projectID = :projectId
            """)
-    SavedProject findByEmployerAndProjectId(User employer, Long projectId);
+    SavedProject findByEmployerAndProjectId(@Param("employer") User employer,
+                                            @Param("projectId") Long projectId);
 
-    // 🔹 Fetch raw saved-project list (used in search)
+    // 🔹 Raw list by employer (non-paginated)
     List<SavedProject> findByEmployer(User employer);
 
 
@@ -79,20 +82,23 @@ public interface SavedProjectRepository extends JpaRepository<SavedProject, Long
        PAGINATION METHODS
        ============================================================ */
 
-    // 🔹 Paginated "all saved" list (NO fetch join — required for paging)
+    // 🔹 Paginated list using Pageable's sort (used by SavedProjectService)
+    Page<SavedProject> findByEmployer(User employer, Pageable pageable);
+
+    // (old one can stay if you still use it elsewhere)
     Page<SavedProject> findAllByEmployerOrderByIdDesc(User employer, Pageable pageable);
 
     // 🔹 Paginated search inside saved projects
+    //     👉 no hardcoded ORDER BY so Pageable's Sort can apply
     @Query("""
            select sp
            from SavedProject sp
            where sp.employer.userId = :employerId
              and (
-                   lower(sp.project.projectName) like :keyword
+                   lower(sp.project.projectName)        like :keyword
                 or lower(sp.project.projectDescription) like :keyword
-                or lower(sp.project.category) like :keyword
+                or lower(sp.project.category)           like :keyword
              )
-           order by sp.id desc
            """)
     Page<SavedProject> searchSavedProjectsForEmployer(@Param("employerId") Long employerId,
                                                       @Param("keyword") String keyword,

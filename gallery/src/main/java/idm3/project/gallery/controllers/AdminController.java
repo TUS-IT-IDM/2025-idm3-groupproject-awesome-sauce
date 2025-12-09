@@ -145,7 +145,7 @@ public class AdminController {
     public List<Project> getProjectsForShowcase(@PathVariable("id") Long id) {
         List<Project> projects = showcaseService.getProjectsForShowcase(id);
         // Prevent recursive user data loops
-        projects.forEach(p -> p.setUser(null));
+        projects.forEach(p -> p.setUserID(null));
         return projects;
     }
 
@@ -201,7 +201,7 @@ public class AdminController {
 
         if (selectedIds == null || selectedIds.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "No showcases selected.");
-            return "redirect:/MainGallery/admin/showcases";
+            return "redirect:/MainGallery/adminDashboard";
         }
 
         showcaseService.deleteShowcasesByIds(selectedIds);
@@ -209,8 +209,9 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("success",
                 selectedIds.size() + " showcase(s) deleted successfully.");
 
-        return "redirect:/MainGallery/admin/showcases";
+        return "redirect:/MainGallery/adminDashboard";
     }
+
 
 
 
