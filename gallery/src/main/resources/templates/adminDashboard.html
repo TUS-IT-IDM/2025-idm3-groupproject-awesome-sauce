@@ -29,8 +29,8 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/about}">About</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/contact}">Contact</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="#footer-contact">Contact</a></li>
 
                 <li class="nav-item" th:if="${user == null}">
                     <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
@@ -160,15 +160,15 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
 
-                                <!-- Single delete (still works) -->
-                                <form th:action="@{/MainGallery/admin/showcases/delete/{id}(id=${showcase.showcaseId})}"
-                                      method="post"
-                                      style="display:inline-block;"
-                                      onsubmit="return confirm('Are you sure you want to delete this showcase?');">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
+                                <!-- Single delete -->
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger"
+                                        formmethod="post"
+                                        th:formaction="@{/MainGallery/admin/showcases/delete/{id}(id=${showcase.showcaseId})}"
+                                        onclick="return confirm('Are you sure you want to delete this showcase?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+
                             </td>
                         </tr>
 
@@ -401,6 +401,18 @@
                 updateUI();
             });
         });
+
+        // ✅ Bulk delete confirmation (only for the "Delete Selected" button)
+        bulkDeleteForm.addEventListener("submit", (e) => {
+            // e.submitter is the button that triggered the submit
+            if (e.submitter && e.submitter.id === "deleteSelectedBtn") {
+                const confirmed = confirm("Are you sure you want to delete all selected showcases? This action cannot be undone.");
+                if (!confirmed) {
+                    e.preventDefault();
+                }
+            }
+        });
+
     });
 
 

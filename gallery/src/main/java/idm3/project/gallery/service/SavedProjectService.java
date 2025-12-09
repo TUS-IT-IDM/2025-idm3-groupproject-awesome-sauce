@@ -9,10 +9,10 @@ import idm3.project.gallery.repository.SavedProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SavedProjectService {
@@ -55,32 +55,59 @@ public class SavedProjectService {
     }
 
     // ------------------------------------------------------------
-    // PAGINATED GETTER
+    // PAGE REQUEST + SORT HELPER
     // ------------------------------------------------------------
-    public Page<SavedProject> getSavedProjectsPaginated(User employer, int page) {
-        if (employer == null) return Page.empty();
+    private PageRequest buildPageRequest(int page, String sortBy) {
+        Sort sort;
 
-        return savedRepo.findAllByEmployerOrderByIdDesc(
-                employer,
-                PageRequest.of(page, PAGE_SIZE)
-        );
+        if (sortBy == null || sortBy.isBlank()) {
+            // Default: newest first by project creation date
+            sort = Sort.by("project.creationDate").descending();
+        } else {
+            switch (sortBy) {
+                case "OLDEST" ->
+                        sort = Sort.by("project.creationDate").ascending();
+                case "NAME_ASC" ->
+                        sort = Sort.by("project.projectName").ascending();
+                case "NAME_DESC" ->
+                        sort = Sort.by("project.projectName").descending();
+                default ->
+                        sort = Sort.by("project.creationDate").descending();
+            }
+        }
+
+        return PageRequest.of(page, PAGE_SIZE, sort);
     }
 
     // ------------------------------------------------------------
-    // PAGINATED SEARCH
+    // PAGINATED GETTER (WITH SORT)
     // ------------------------------------------------------------
-    public Page<SavedProject> searchSavedPaginated(String keyword, User employer, int page) {
+    public Page<SavedProject> getSavedProjectsPaginated(User employer, int page, String sortBy) {
         if (employer == null) return Page.empty();
+
+        PageRequest pageable = buildPageRequest(page, sortBy);
+        // ⚠️ Requires: Page<SavedProject> findByEmployer(User employer, Pageable pageable);
+        return savedRepo.findByEmployer(employer, pageable);
+    }
+
+    // ------------------------------------------------------------
+    // PAGINATED SEARCH (WITH SORT)
+    // ------------------------------------------------------------
+    public Page<SavedProject> searchSavedPaginated(String keyword, User employer, int page, String sortBy) {
+        if (employer == null) return Page.empty();
+
         if (keyword == null || keyword.trim().isEmpty()) {
-            return getSavedProjectsPaginated(employer, page);
+            return getSavedProjectsPaginated(employer, page, sortBy);
         }
 
         String search = "%" + keyword.trim().toLowerCase() + "%";
+        PageRequest pageable = buildPageRequest(page, sortBy);
 
+        // ⚠️ Requires: Page<SavedProject> searchSavedProjectsForEmployer(Long employerId, String keyword, Pageable pageable);
         return savedRepo.searchSavedProjectsForEmployer(
                 employer.getUserId(),
                 search,
-                PageRequest.of(page, PAGE_SIZE)
+                pageable
         );
     }
 

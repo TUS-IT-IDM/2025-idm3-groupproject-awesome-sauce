@@ -38,7 +38,7 @@ public class MainGalleryController {
     @GetMapping("/Login")
     public ModelAndView showLoginPage() {
         ModelAndView mav = new ModelAndView("login");
-        mav.addObject("loginDTO", new LoginDTO()); // <-- IMPORTANT
+        mav.addObject("loginDTO", new LoginDTO());
         return mav;
     }
 
@@ -69,11 +69,11 @@ public class MainGalleryController {
         session.setAttribute("loggedInUser", user);
 
         return switch (user.getUserType().toLowerCase()) {
-            case "admin" -> new ModelAndView("redirect:/MainGallery/adminDashboard");
-            case "student" -> new ModelAndView("redirect:/MainGallery/studentDashboard");
-            case "senioradmin" -> new ModelAndView("redirect:/MainGallery/seniorAdminDashboard");
-            case "employer" -> new ModelAndView("redirect:/MainGallery/employerDashboard");
-            default -> new ModelAndView("redirect:/MainGallery/HomePage");
+            case "admin"      -> new ModelAndView("redirect:/MainGallery/adminDashboard");
+            case "student"    -> new ModelAndView("redirect:/MainGallery/studentDashboard");
+            case "senioradmin"-> new ModelAndView("redirect:/MainGallery/seniorAdminDashboard");
+            case "employer"   -> new ModelAndView("redirect:/MainGallery/employerDashboard");
+            default           -> new ModelAndView("redirect:/MainGallery/HomePage");
         };
     }
 
@@ -102,20 +102,31 @@ public class MainGalleryController {
 
         ModelAndView mv = new ModelAndView("register");
 
+        System.out.println("➡️ Register handler hit");
+        System.out.println("   userName = " + user.getUserName());
+        System.out.println("   email    = " + user.getEmailAddress());
+
         if (result.hasErrors()) {
+            System.out.println("❌ Binding/validation errors:");
+            result.getAllErrors().forEach(err -> System.out.println("   - " + err));
             return mv;
         }
 
         // Default student role
         user.setUserType("STUDENT");
 
-        if (!userService.registerUser(user)) {
+        boolean ok = userService.registerUser(user);
+        System.out.println("registerUser(...) returned = " + ok);
+
+        if (!ok) {
             mv.addObject("error", "An account with this username or email already exists.");
             return mv;
         }
 
+        System.out.println("✅ Registration success – redirecting to login");
         return new ModelAndView("redirect:/MainGallery/Login");
     }
+
 
 
     /* ============================================================
@@ -146,35 +157,41 @@ public class MainGalleryController {
 
 
     /* ============================================================
-       HOMEPAGE (CLEAN, SINGLE MAPPING)
+       HOMEPAGE (SINGLE MAPPING WITH FILTERS)
        ============================================================ */
 
     @GetMapping({"/HomePage", ""})
     public ModelAndView home(
             HttpSession session,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) String keyword) {
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String sortBy) {
 
         ModelAndView mav = new ModelAndView("homepage");
 
-        Page<Project> projectPage;
+        // ✅ Let ProjectService handle pagination + keyword + category + sorting
+        Page<Project> projectPage =
+                projectService.getPaginatedProjects(page, keyword, category, sortBy);
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            projectPage = projectService.searchProjectsPaginated(keyword, page);
-        } else {
-            projectPage = projectService.getPaginatedProjects(page);
-        }
-
+        // Generate thumbnails for project cards
         generateProjectThumbnails(projectPage.getContent());
 
+        // Generate thumbnails for hero showcase carousel
         List<Showcase> showcases = generateShowcaseThumbnails();
 
         mav.addObject("projectPage", projectPage);
-        mav.addObject("keyword", keyword);
         mav.addObject("AllLiveShowcases", showcases);
 
+        // Pass current filters to the view
+        mav.addObject("keyword", keyword);
+        mav.addObject("category", category);
+        mav.addObject("sortBy", sortBy);
+
+        // Saved project IDs for employer bookmark icons
         User user = (User) session.getAttribute("loggedInUser");
-        if (user != null && user.getUserType().equalsIgnoreCase("employer")) {
+        if (user != null && user.getUserType() != null
+                && user.getUserType().equalsIgnoreCase("employer")) {
             mav.addObject("savedIds", savedProjectService.getSavedProjectIds(user));
         }
 
@@ -183,7 +200,7 @@ public class MainGalleryController {
 
 
     /* ============================================================
-       SEARCH
+       SEARCH (SEPARATE PAGE)
        ============================================================ */
 
     @GetMapping("/searchProjects")
