@@ -47,13 +47,26 @@ public class UserService {
     // =========================================
 
     public boolean registerUser(User user) {
-        if (userRepository.existsByUserName(user.getUserName()) ||
-                userRepository.existsByEmailAddress(user.getEmailAddress())) {
+        System.out.println("➡️ UserService.registerUser called");
+        System.out.println("   userName = " + user.getUserName());
+        System.out.println("   email    = " + user.getEmailAddress());
+
+        boolean usernameExists = userRepository.existsByUserName(user.getUserName());
+        boolean emailExists    = userRepository.existsByEmailAddress(user.getEmailAddress());
+
+        System.out.println("   usernameExists = " + usernameExists);
+        System.out.println("   emailExists    = " + emailExists);
+
+        if (usernameExists || emailExists) {
+            System.out.println("❌ Duplicate detected — not saving");
             return false;
         }
+
         userRepository.save(user);
+        System.out.println("✅ User saved with ID = " + user.getUserId());
         return true;
     }
+
 
     // =========================================
     // SEARCH

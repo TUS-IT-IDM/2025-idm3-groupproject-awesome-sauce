@@ -102,20 +102,31 @@ public class MainGalleryController {
 
         ModelAndView mv = new ModelAndView("register");
 
+        System.out.println("➡️ Register handler hit");
+        System.out.println("   userName = " + user.getUserName());
+        System.out.println("   email    = " + user.getEmailAddress());
+
         if (result.hasErrors()) {
+            System.out.println("❌ Binding/validation errors:");
+            result.getAllErrors().forEach(err -> System.out.println("   - " + err));
             return mv;
         }
 
         // Default student role
         user.setUserType("STUDENT");
 
-        if (!userService.registerUser(user)) {
+        boolean ok = userService.registerUser(user);
+        System.out.println("registerUser(...) returned = " + ok);
+
+        if (!ok) {
             mv.addObject("error", "An account with this username or email already exists.");
             return mv;
         }
 
+        System.out.println("✅ Registration success – redirecting to login");
         return new ModelAndView("redirect:/MainGallery/Login");
     }
+
 
 
     /* ============================================================

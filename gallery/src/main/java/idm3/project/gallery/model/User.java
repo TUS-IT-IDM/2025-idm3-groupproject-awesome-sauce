@@ -21,14 +21,10 @@ public class User {
     @Column(name = "userid")
     private long userId;
 
-    @NotBlank(message = "First name is required")
-    @Size(max = 50, message = "First name cannot exceed 50 characters")
-    @Column(name = "FirstName", length = 50)
+    // database has firstname and surname as fields, however
+    // our website does not require that, and as such, the two variables
+    // are just initialised without being used (optional).
     private String firstName;
-
-    @NotBlank(message = "Surname is required")
-    @Size(max = 225, message = "Surname cannot exceed 225 characters")
-    @Column(name = "surname", length = 225)
     private String surname;
 
     @NotBlank(message = "Email is required")

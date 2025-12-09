@@ -166,7 +166,7 @@ public class ProjectService {
     }
 
     /**
-     * ✅ New flexible method:
+     *   New flexible method:
      * - keyword  → search in name/description
      * - category → filter by category
      * - sortBy   → "newest", "oldest", "az", "za" (creationDate / name)
