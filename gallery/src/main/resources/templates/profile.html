@@ -1,218 +1,277 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>User Profile</title>
+  <meta charset="UTF-8">
+  <title>My Profile | FutureProof</title>
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" type="text/css" href="/assets/css/navBar.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/profile.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/footer.css">
 
   <!-- favicon -->
   <link rel="icon" type="image/x-icon" href="/assets/images/website/Future_Proof_Logo_Icon.png">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f8f9fa;
-      color: #333;
-    }
-    .profile-container {
-      background: #fff;
-      border-radius: 10px;
-      padding: 25px 35px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      max-width: 600px;
-    }
-    h1 {
-      color: #222;
-    }
-    p {
-      margin: 8px 0;
-      font-size: 15px;
-    }
-    .button-group {
-      margin-top: 20px;
-    }
-    a.button {
-      display: inline-block;
-      margin-right: 10px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      transition: background-color 0.3s;
-    }
-    a.button:hover {
-      background-color: #0056b3;
-    }
-    a.logout {
-      background-color: #dc3545;
-    }
-    a.logout:hover {
-      background-color: #b02a37;
-    }
-  </style>
 </head>
 
-<!-- HEADER -->
-<header class="header" th:with="user=${session.loggedInUser}">
-  <a th:href="@{/MainGallery/HomePage}" class="logo">LOGO GOES HERE</a>
+<body th:with="user=${session.loggedInUser}">
 
-  <nav class="nav-items" th:with="user=${session.loggedInUser}">
-    <a th:href="@{/MainGallery/HomePage}">Home</a>
-    <a th:href="@{/MainGallery/about}">About</a>
-    <a th:href="@{/MainGallery/contact}">Contact</a>
+<!-- NAVBAR (same style as other pages) -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/MainGallery/HomePage}">
+      <img src="/assets/images/website/Future_Proof_Logo.png" alt="FutureProof Logo" height="40" class="me-2">
+    </a>
 
-    <a th:if="${user == null}" th:href="@{/MainGallery/Register}" style="color: blue;">Register</a>
-    <a th:if="${user == null}" th:href="@{/MainGallery/Login}" style="color: blue;">Log in</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <span th:if="${user != null}" th:switch="${#strings.toLowerCase(user.userType)}">
-      <a th:case="'admin'"        th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
-      <a th:case="'senioradmin'"  th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
-      <a th:case="'student'"      th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
-      <a th:case="'employer'"     th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
-      <a th:case="*"              th:href="@{/MainGallery/dashboard}">Dashboard</a>
-    </span>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" th:href="@{/MainGallery/HomePage}">Home</a></li>
 
-    <div class="icon-button" th:with="isLoggedIn=${user != null}">
-      <a th:if="${isLoggedIn}" th:href="@{/MainGallery/profile}">
-        <i class="fas fa-user"></i>
+        <li class="nav-item"><a class="nav-link" href="#footer-contact">Contact</a></li>
+
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Register}">Register</a>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link text-primary" th:href="@{/MainGallery/Login}">Login</a>
+        </li>
+
+        <!-- Dashboard link depending on role -->
+        <li class="nav-item" th:if="${user != null}">
+          <span class="dashboard-link"
+                th:switch="${#strings.toLowerCase(user.userType)}">
+            <a class="nav-link" th:case="'admin'"       th:href="@{/MainGallery/adminDashboard}">Dashboard</a>
+            <a class="nav-link" th:case="'senioradmin'" th:href="@{/MainGallery/seniorAdminDashboard}">Dashboard</a>
+            <a class="nav-link" th:case="'student'"     th:href="@{/MainGallery/studentDashboard}">Dashboard</a>
+            <a class="nav-link" th:case="'employer'"    th:href="@{/MainGallery/employerDashboard}">Dashboard</a>
+            <a class="nav-link" th:case="*"             th:href="@{/MainGallery/dashboard}">Dashboard</a>
+          </span>
+        </li>
+      </ul>
+
+      <!-- Profile Icon -->
+      <a th:if="${user != null}" th:href="@{/MainGallery/profile}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="ms-2">
       </a>
-      <a th:if="${!isLoggedIn}" th:href="@{/MainGallery/Login}">
-        <i class="fas fa-user"></i>
+      <a th:if="${user == null}" th:href="@{/MainGallery/Login}">
+        <img src="/assets/images/website/Profile.png" alt="Profile_Icon" height="40" class="ms-2">
       </a>
     </div>
+  </div>
+</nav>
 
-    <div class="icon-button">
-      <a th:href="@{/MainGallery/search}"><i class="fas fa-search"></i></a>
+<!-- MAIN CONTENT -->
+<main class="fp-profile-page">
+
+  <!-- Flash Messages -->
+  <div class="container mb-3" style="max-width: 800px;">
+    <div th:if="${message}"
+         class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 py-3 px-4 text-center"
+         role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <span th:text="${message}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-  </nav>
-</header>
 
-<body>
-
-<!-- 🔔 Flash Messages -->
-<div class="container mt-4" style="max-width: 600px;">
-  <div th:if="${message}"
-       class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 py-3 px-4 text-center animate__animated animate__fadeInDown"
-       role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    <span th:text="${message}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div th:if="${error}"
+         class="alert alert-danger alert-dismissible fade show shadow-sm border-0 rounded-3 py-3 px-4 text-center"
+         role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <span th:text="${error}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
 
-  <div th:if="${error}"
-       class="alert alert-danger alert-dismissible fade show shadow-sm border-0 rounded-3 py-3 px-4 text-center animate__animated animate__fadeInDown"
-       role="alert">
-    <i class="fas fa-exclamation-triangle me-2"></i>
-    <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <!-- Logged-in Profile Card -->
+  <div class="container" style="max-width: 900px;" th:if="${user != null}">
+    <div class="fp-profile-card shadow-sm">
+
+      <!-- Left: avatar + upload -->
+      <div class="fp-profile-left">
+        <div class="fp-avatar-wrapper">
+          <img th:if="${user.profilePicture != null}"
+               th:src="@{|/profile/${user.profilePicture}|}"
+               alt="Profile Picture"
+               class="fp-avatar-image">
+
+          <img th:if="${user.profilePicture == null}"
+               th:src="@{/assets/images/website/Profile.png}"
+               alt="Default Profile"
+               class="fp-avatar-image fp-avatar-default">
+        </div>
+
+        <form th:action="@{/MainGallery/profile/uploadPicture}"
+              method="post"
+              enctype="multipart/form-data"
+              class="fp-upload-form">
+          <label class="form-label mb-1">Update profile picture</label>
+          <div class="d-flex gap-2 align-items-center">
+            <input type="file"
+                   name="profilePicture"
+                   accept="image/*"
+                   class="form-control form-control-sm"
+                   required>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="fas fa-upload me-1"></i></button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right: user info -->
+      <div class="fp-profile-right">
+        <div class="fp-profile-header">
+          <h1 class="fp-profile-title">
+            Hi, <span th:text="${user.firstName} ?: ${user.userName}">User</span> 👋
+          </h1>
+          <p class="fp-profile-subtitle">
+            Acount Details
+          </p>
+        </div>
+
+        <div class="fp-profile-info-grid">
+          <div class="fp-info-item">
+            <span class="fp-info-label"><i class="fas fa-envelope me-1"></i>Email</span>
+            <span class="fp-info-value" th:text="${user.emailAddress}">[Email]</span>
+          </div>
+
+          <div class="fp-info-item"
+               th:if="${#strings.toLowerCase(user.userType) == 'employer'}">
+  <span class="fp-info-label">
+    <i class="fas fa-building me-1"></i>Organisation
+  </span>
+            <span class="fp-info-value"
+                  th:text="${user.organization != null ? user.organization : 'Not specified'}">
+    Not specified
+  </span>
+          </div>
+
+
+          <div class="fp-info-item">
+            <span class="fp-info-label"><i class="fas fa-user-tag me-1"></i>User Type</span>
+            <span class="fp-info-value text-capitalize" th:text="${user.userType}">[User Type]</span>
+          </div>
+
+
+        <div class="fp-profile-actions mt-4">
+          <a class="btn fp-btn-secondary" th:href="@{/MainGallery/HomePage}">
+            <i class="fas fa-arrow-left me-1"></i> Back to Home
+          </a>
+
+          <a class="btn fp-btn-danger"
+             th:href="@{/MainGallery/Logout}"
+             onclick="return confirm('Log out now?')">
+            <i class="fas fa-right-from-bracket me-1"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
+  <!-- Not logged in -->
+  <div class="container" style="max-width: 600px;" th:if="${user == null}">
+    <div class="fp-profile-card text-center shadow-sm">
+      <h2 class="mb-3">You’re not logged in</h2>
+      <p class="mb-4">Log in to view and manage your FutureProof profile.</p>
+      <a class="btn btn-primary" th:href="@{/MainGallery/Login}">
+        <i class="fas fa-right-to-bracket me-1"></i> Go to Login
+      </a>
+    </div>
+  </div>
 
-<div class="profile-container" th:if="${user != null}">
+  </div>
+</main>
 
-  <!-- 👤 Profile Picture Upload Section -->
-  <div class="mt-4">
-    <hr>
-    <h3>Profile Picture</h3>
+<!-- FOOTER -->
+<footer class="fp-footer" id="footer-contact">
 
+  <div class="fp-footer-container">
 
-    <div class="text-center mb-3">
-      <img th:if="${user.profilePicture != null}"
-           th:src="@{'/assets/images/profile/' + ${user.profilePicture}}"
-           alt="Profile Picture"
-           class="rounded-circle border shadow-sm"
-           style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%;
-       box-shadow: 0 0 10px rgba(0,0,0,0.15); border: 2px solid #f8f9fa;">
-      <div th:if="${user.profilePicture == null}" class="text-muted small fst-italic mt-2">
-        No profile picture uploaded yet
+    <!-- LEFT -->
+    <div class="fp-footer-left">
+      <img src="/assets/images/website/Future_Proof_Logo.png" class="fp-logo" alt="FutureProof Logo">
+
+      <p class="fp-tagline">
+        Empowering students to showcase their<br>
+        skills and connect with employers<br>
+        – from portfolio to profession.
+      </p>
+
+      <div class="fp-socials">
+        <a href="#"><img src="/assets/images/website/twitter.png" alt="X"></a>
+        <a href="#"><img src="/assets/images/website/linkedin.png" alt="LinkedIn"></a>
+        <a href="#"><img src="/assets/images/website/facebook.png" alt="Facebook"></a>
+        <a href="#"><img src="/assets/images/website/instagram.png" alt="Instagram"></a>
       </div>
     </div>
 
+    <!-- RIGHT GROUP (middle + right) -->
+    <div class="fp-footer-right-group">
 
-
-    <form th:action="@{/MainGallery/profile/uploadPicture}"
-          method="post"
-          enctype="multipart/form-data"
-          class="mt-3">
-
-      <div style="display:flex;gap:10px;align-items:center;">
-        <input type="file"
-               name="profilePicture"
-               accept="image/*"
-               class="form-control"
-               style="max-width:300px;"
-               required>
-        <button type="submit" class="btn btn-primary">Upload</button>
+      <!-- Middle Column -->
+      <div class="fp-footer-column">
+        <h4>Technological University of<br>The Shannon</h4>
+        <p>
+          Athlone Campus<br>
+          University Road, Athlone<br>
+          Co. Westmeath<br>
+          N37 HD68
+        </p>
+        <p>
+          Phone: <a href="tel:+3539096468000">+353 90 6468000</a><br>
+          Email: <a href="mailto:reception.midlands@tus.ie">reception.midlands@tus.ie</a>
+        </p>
       </div>
-    </form>
 
+      <!-- Right Column -->
+      <div class="fp-footer-column">
+        <h4>Technological University of<br>The Shannon</h4>
+        <p>
+          Moylish Campus<br>
+          Moylish Park<br>
+          Limerick<br>
+          V94 EC5T
+        </p>
+        <p>
+          Phone: <a href="tel:+35361293000">+353 61 293000</a><br>
+          Email: <a href="mailto:reception.midwest@tus.ie">reception.midwest@tus.ie</a>
+        </p>
+      </div>
 
-    <h1>Welcome, <span th:text="${user.firstName}">[First Name]</span></h1>
-
-  <p><strong>Email:</strong> <span th:text="${user.emailAddress}">[Email]</span></p>
-  <p><strong>Organization:</strong> <span th:text="${user.organization}">[Organization]</span></p>
-  <p><strong>User Type:</strong> <span th:text="${user.userType}">[User Type]</span></p>
-
-  <!-- 👤 Profile Picture Upload Section -->
-  <div class="mt-4">
-    <hr>
-    <h3>Profile Picture</h3>
-
-    <div class="text-center mb-3">
-      <!-- ✅ Use uploaded image if available, else fallback -->
-      <img th:if="${user.profilePicture != null}"
-           th:src="@{|/profile/${user.profilePicture}|}"
-           alt="Profile Picture"
-           class="rounded-circle border shadow-sm"
-           style="width:140px; height:140px; object-fit:cover; border-radius:50%;
-                  box-shadow:0 0 10px rgba(0,0,0,0.15); border:2px solid #f8f9fa;">
-      <img th:if="${user.profilePicture == null}"
-           th:src="@{/assets/images/default-profile.jpg}"
-           alt="Default Profile"
-           class="rounded-circle border shadow-sm"
-           style="width:140px; height:140px; object-fit:cover; border-radius:50%;
-                  box-shadow:0 0 10px rgba(0,0,0,0.15); border:2px solid #f8f9fa;">
-    </div>
-
-    <form th:action="@{/MainGallery/profile/uploadPicture}"
-          method="post"
-          enctype="multipart/form-data"
-          class="mt-3 d-flex align-items-center gap-2">
-      <input type="file" name="profilePicture" accept="image/*" class="form-control" style="max-width:300px;" required>
-      <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
-
-    <div class="mt-3">
-      <p th:if="${success}" th:text="${success}" class="text-success fw-semibold"></p>
-      <p th:if="${error}" th:text="${error}" class="text-danger fw-semibold"></p>
     </div>
   </div>
 
-  <div class="button-group">
-    <a class="button" th:href="@{/MainGallery/HomePage}">Back to Home</a>
-    <a th:if="${user != null}" class="button logout" th:href="@{/MainGallery/Logout}"
-       onclick="return confirm('Log out now?')">Logout</a>
-  </div>
-</div>
+  <img src="/assets/images/website/Future_Proof_Icon_Logo_Low_Opacity.png"
+       class="fp-footer-watermark"
+       alt="">
+</footer>
 
-<div th:if="${user == null}">
-  <h2>You are not logged in.</h2>
-  <a class="button" th:href="@{/MainGallery/Login}">Go to Login</a>
-</div>
-</div>
-</body>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   // Auto-dismiss flash messages after 4 seconds
   setTimeout(() => {
     document.querySelectorAll('.alert').forEach(alert => {
-      const bsAlert = new bootstrap.Alert(alert);
-      bsAlert.close();
+      if (window.bootstrap) {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      } else {
+        alert.remove();
+      }
     });
   }, 4000);
 </script>
 
+</body>
 </html>
