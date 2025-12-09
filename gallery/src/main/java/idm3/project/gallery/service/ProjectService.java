@@ -126,6 +126,19 @@ public class ProjectService {
         return projectRepo.findTop5ByOrderByCreationDateDesc();
     }
 
+  
+  // Possible error here
+    public Project findById(long id) {
+        return projectRepo.findById(id).orElse(null);
+    }
+
+    public Project save(Project project) {
+        return projectRepo.save(project);
+    }
+
+//    public void deleteById(long id) {
+//        projectRepo.deleteById(id);
+//    }
 
     /* ============================================================
        SIMPLE (NON-PAGINATED) SEARCH
